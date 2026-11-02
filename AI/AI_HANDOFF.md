@@ -97,3 +97,12 @@ _Cập nhật: 2026-11-02 (Asia/Ho_Chi_Minh) · Agent: Claude (Cowork, cloud ses
 - CHƯA kiểm chứng: hiệu quả thật trong game trên Windows; singlecpu=false có gây treo không; DamageParticleSystems rỗng trong game.
 - Tag `v2026.11.02`: git push tag từ cloud thất bại; form tạo release đã điền sẵn trong Chrome, người dùng tự bấm Publish (hệ thống chặn tôi bấm).
 
+## 2026-11-02 11:40 — Bố cục màn hình + Windows 11
+- Mod Editor: nhóm nút trên cùng bọc trong `.acts`; ≤1439 px thanh nút xuống dòng 2 (trước đó 1024 px đẩy “Khôi phục…”/“Lưu vào game” ra ngoài màn hình); body dạng flex cột nên chiều cao tự theo thanh nút; `.view` max-width 1060 → 1800 px (1920 px: 6 ô/hàng, 2560: 7); ≥1800 px cột danh sách 360 px. `test_layout.js`: 9 cỡ màn hình, không cuộn ngang, nút Lưu luôn hiện. test2.js, test_perf.js vẫn qua.
+- Windows 11 (người dùng yêu cầu “ensure work trên Windows 11”):
+  - PE: BINKW32.DLL / Play_*.exe chỉ import kernel32, advapi32, user32, msvcrt; subsystem 4.0; vá IAT so khớp cả theo **tên hàm** lẫn địa chỉ nên không lệ thuộc chuyển tiếp kernel32→kernelbase của Win10/11.
+  - Wine 9 đặt Windows 11 (build 22000): Play_YR → gamemd.exe, Play_RA2 → game.exe khởi động; registry ảo 28 dòng, 0 khóa Westwood trong registry thật, 0 file mới ngoài thư mục, blocked.log trống. (Bộ file thử là bản stage một phần 57 file; YR thoát sau ~30–45 s headless, chưa rõ do thiếu file hay headless.)
+  - Rủi ro chỉ kiểm được trên máy thật: Smart App Control (chặn exe không chữ ký trên máy cài mới 22H2+), SmartScreen với file từ ZIP (MOTW), Defender nghi DLL vá IAT, màn đen khi đổi độ phân giải (đổi renderer — theo admin CnCNet).
+  - README VI/EN: mục “Windows 11”; editor: gợi ý đổi bộ vẽ khi màn đen.
+- CHƯA kiểm chứng: chạy trên Windows 11 thật.
+

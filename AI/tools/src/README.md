@@ -15,6 +15,7 @@
 - `template.html` — mã của `AI\tools\RA2_Mod_Editor.html`; dòng `/*DATA*/` được thay bằng `window.RA2DATA=…` (luật gốc/mod gzip+base64, bảng art→cameo, tên CSF, icon cameo JPEG).
 - Dữ liệu trích từ: expandmd01.mix (rulesmd chính thức YR), expandmd03.mix (rulesmd/artmd mod YR), local.mix/localmd.mix, cameo.mix, cameomd.mix, ecache03/04/5.mix, ra2.csf, ra2md.csf, art.ini, rules.ini (rời).
 - `test1.js`, `test2.js` — kiểm thử Playwright (mở, sửa, mod nhanh, hoàn tác, nhân bản, tải file, chuyển RA2).
+- `test_layout.js` — đo bố cục ở 9 cỡ màn hình (2560 → 390 px): số ô mỗi hàng, cuộn ngang, nút Lưu có hiện không. Chạy: `node test_layout.js ../../RA2_Mod_Editor.html`.
 - `test_perf.js` — kiểm thử hộp **Hiệu năng**: thư mục game giả lập bằng OPFS (`navigator.storage.getDirectory()`), cần chạy qua http (vd `python3 -m http.server 8765`) và đặt `ddraw.ini`, `RA2MD.INI`, `RA2.INI` thật vào `fx/`.
 
 ## guide/

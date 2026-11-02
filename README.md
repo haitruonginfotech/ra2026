@@ -58,6 +58,18 @@ So từng byte với bản repack gốc: **296 file game giữ nguyên**. Repo c
 - Những gì game "ghi" vào registry nằm ở `portable\registry.txt`. Mọi lần bị chặn ghi ra ngoài được ghi vào `portable\blocked.log`.
 - Gỡ game = xóa thư mục.
 
+### Windows 11
+
+Dự án dùng được trên Windows 10 và 11 (64-bit, cả máy ARM). `BINKW32.DLL` và `Play_*.exe` chỉ gọi các thư viện có sẵn trong mọi bản Windows (kernel32, advapi32, user32, msvcrt). Lưu ý:
+
+- **Không cần** chế độ tương thích (Compatibility mode) hay *Run as administrator*. Nếu đã bật thì nên tắt: chạy bằng quyền admin không cần thiết cho bản portable.
+- Để thư mục game ở ổ riêng (vd `E:\games\Ra2\Ra2026`). **Không** đặt trong `C:\Program Files` (Windows chặn ghi) hay thư mục OneDrive (Desktop/Documents thường được OneDrive đồng bộ).
+- **SmartScreen:** nếu tải repo bằng file ZIP, Windows có thể hiện “Windows protected your PC” khi mở `Play_*.exe`. Bấm *More info → Run anyway*, hoặc chuột phải file ZIP → *Properties → Unblock* trước khi giải nén. Clone bằng `git` thì không bị.
+- **Smart App Control** (chỉ bật sẵn trên máy cài mới Windows 11 22H2 trở lên) có thể chặn hẳn các file exe không có chữ ký số: `Play_*.exe` tự build, và cả `game.exe`/`gamemd.exe` của bản repack. Xem ở *Windows Security → App & browser control → Smart App Control*. Muốn chơi thì phải để Off.
+- **Microsoft Defender** có thể nghi ngờ `BINKW32.DLL` vì nó sửa bảng import của game (để chặn ghi). Nếu bị cách ly, khôi phục và thêm thư mục `Ra2026` vào *Exclusions*. Mã nguồn ở `AI/tools/src/portable-guard/`.
+- **Màn hình đen / văng khi đổi độ phân giải:** mở Mod Editor → **Hiệu năng** → đổi *Bộ vẽ hình* (Direct3D 9 ↔ OpenGL ↔ GDI).
+- Mod Editor: dùng Edge (có sẵn) hoặc Chrome. Font Bahnschrift/Segoe UI có sẵn trong Windows 11.
+
 ## 5. Chỉnh luật chơi (mod)
 
 1. Mở `AI\tools\RA2_Mod_Editor.html` bằng **Chrome** hoặc **Edge**.
@@ -89,6 +101,8 @@ Xem [`AI/tools/src/README.md`](AI/tools/src/README.md): mingw-w64 cho DLL/EXE, P
 ## 7. Lịch sử thay đổi
 
 ### 2026-11-02
+- 🪟 Hướng dẫn **Windows 11** (SmartScreen, Smart App Control, Defender, bộ vẽ hình); thử lại trên Wine giả lập Windows 11.
+- 🖥️ Mod Editor hợp màn hình hơn: màn 1024–1439 px thanh nút xuống 2 dòng (trước đó nút **Lưu vào game** bị đẩy ra ngoài ở 1024 px); màn 1920+ hiện 6–7 ô mỗi hàng.
 - ⚡ **Mod Editor → Hiệu năng**: chỉnh `ddraw.ini` (bộ vẽ, FPS, V-Sync, nhiều nhân CPU, chế độ màn hình), độ phân giải và mức chi tiết trong `RA2MD.INI`/`RA2.INI`, giảm mảnh vỡ/hiệu ứng trong luật chơi; ghi thẳng vào file, có sao lưu. Kèm nút cấu hình đề xuất cho trận đông quân.
 - 🏷️ Mốc phiên bản `v2026.11.02` (baseline) để quay lại khi cần.
 - 📋 Repo chỉ giữ file **đã chỉnh sửa hoặc thêm mới** so với bản gốc (đã đối chiếu từng byte: 296 file game giữ nguyên); thêm bảng khác biệt ở mục 2.
@@ -113,7 +127,7 @@ Xem [`AI/tools/src/README.md`](AI/tools/src/README.md): mingw-w64 cho DLL/EXE, P
 
 ## 8. Chưa kiểm chứng
 
-- Chạy game trên Windows thật sau khi cài lớp chặn.
+- Chạy game trên Windows 11 thật sau khi cài lớp chặn. Đã thử trên Wine giả lập Windows 11 (build 22000): YR và RA2 khởi động qua `Play_*.exe`, registry ghi vào `portable\registry.txt`, không ghi gì ra ngoài thư mục. Wine không thay được Windows thật (đồ họa, Defender, Smart App Control).
 - Các nút Mở thư mục / Lưu / Khôi phục / Hiệu năng của Mod Editor trên Chrome/Edge thật (đã thử bằng thư mục giả lập trong Chromium).
 - Mức giảm giật thực tế của từng tùy chọn Hiệu năng; “Bỏ khói lửa trên công trình” chưa thử trong game.
 
