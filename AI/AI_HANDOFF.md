@@ -121,3 +121,10 @@ _Cập nhật: 2026-11-02 (Asia/Ho_Chi_Minh) · Agent: Claude (Cowork, cloud ses
 - Kiểm chứng: Playwright 1440 (DPR 1), 1536 (DPR 1,25), 390 (DPR 3): ảnh 60×48 gốc, hiển thị 180×144/120×96 pixelated; test2, test_perf, test_sharp, test_layout qua, không lỗi console.
 - Chưa làm: ảnh trong sổ tay PDF vẫn phóng bằng Lanczos (người dùng chưa yêu cầu).
 
+## 2026-11-02 14:45 — Cameo AI (Real-ESRGAN) + bảng Thay đổi có ảnh & giải thích
+- Người dùng muốn ảnh lớn ở khung chi tiết nét (không vỡ ô). Phóng thường (Lanczos ± làm sắc) chỉ mịn hơn, vẫn nhòe → đề xuất Real-ESRGAN; chạy mô hình tải từ GitHub bị hệ thống chặn cho tới khi **người dùng đồng ý (14:14 “Đồng ý chạy Real-ESRGAN”)**.
+- Real-ESRGAN x4plus (spandrel 0.x, torch CPU) trên 434 cameo → 240×192; lần 2 tô vùng màu 0 bằng màu kề bên để hết viền xanh. Đóng gói WebP q80 (3,52 MB base64) thay `icons` trong data.js; icon() nhận dạng mime theo đầu base64. Bỏ `image-rendering: pixelated`. HTML 2,31 → 4,30 MB.
+- Lưu ý: AI tự vẽ chi tiết (mặt chó, lông…) có thể khác gốc; ảnh gốc PNG vẫn tái tạo được bằng `cameo/extract.py` + `build_png.py`.
+- Người dùng (14:14, kèm ảnh chụp bảng Thay đổi): “phải có ảnh minh họa và giải thích nó là cái gì”. Bảng Thay đổi viết lại: nhóm theo mục (`describeSec`: quân/công trình + cameo, vũ khí → quân dùng, đầu nổ → quân dùng, siêu vũ khí, luật chung/AudioVisual…, nhãn chữ khi không có ảnh), từng khóa có nhãn + giải thích (`keyDoc`: F, GENERAL_FIELDS, KEYDOC mới cho MaxDebris/MinDebris/DetailMinFrameRate…), tóm tắt theo loại. 568 thay đổi mở trong ~0,35–0,4 s.
+- Kiểm chứng: test_changes (301 nhóm, Hoàn lại, Xem điều hướng), test2, test_perf, test_sharp, test_layout 9/9; ảnh 240×192 hiển thị 180×144 (DPR 1, 1,25) và 120×96 (DPR 3); không lỗi console.
+

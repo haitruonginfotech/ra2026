@@ -102,6 +102,8 @@ Xem [`AI/tools/src/README.md`](AI/tools/src/README.md): mingw-w64 cho DLL/EXE, P
 ## 7. Lịch sử thay đổi
 
 ### 2026-11-02
+- 🤖 **Ảnh quân & công trình phóng to bằng AI (Real-ESRGAN x4plus)**: 434 cameo 60×48 → 240×192 (WebP), nét và mịn ở khung chi tiết; danh sách dùng cùng ảnh thu nhỏ. AI tự vẽ thêm chi tiết nên có thể hơi khác ảnh gốc. File editor ~4,3 MB.
+- 📋 **Bảng Thay đổi có ảnh và giải thích**: gộp theo từng quân/mục, có ảnh cameo (hoặc nhãn Luật / Vũ khí / Nhà…), tên tiếng Việt, loại (vd “Vũ khí của Sniper”, “Công trình · nhà dân, không xây được”), tên và giải thích từng thuộc tính; dòng tóm tắt số thay đổi theo loại.
 - 🖼️ **Ảnh quân & công trình trong Mod Editor nét hơn**: trích lại 434 ảnh cameo gốc (60×48) từ file game thành PNG 8-bit không mất dữ liệu (trước là JPEG nén), hiển thị đúng cỡ trong danh sách và phóng đúng ×3 (×2 trên điện thoại) với `image-rendering: pixelated`, nền trong suốt.
 - 🔎 **Làm nét hình trong game**: hình mờ do cnc-ddraw phóng to bằng bilinear (`d3d9linear=true`, `shader=bilinear.glsl`) và kéo méo (`maintas=false`). Hộp Hiệu năng thêm phần **Độ nét hình** (nearest / xBRZ / Lanczos, giữ tỉ lệ, phóng số nguyên) và nút **Hình nét nhất** (độ phân giải bằng màn hình).
 - 🪟 Hướng dẫn **Windows 11** (SmartScreen, Smart App Control, Defender, bộ vẽ hình); thử lại trên Wine giả lập Windows 11.

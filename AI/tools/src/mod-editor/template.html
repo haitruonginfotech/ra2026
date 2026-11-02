@@ -61,8 +61,8 @@ aside{background:var(--panel);border-right:1px solid var(--line);display:flex;fl
 .row{display:grid;grid-template-columns:60px 1fr auto;gap:10px;align-items:center;padding:5px 12px;cursor:pointer;border-left:3px solid transparent}
 .row:hover{background:#EEF2F5}
 .row[aria-selected=true]{background:#E1E7EC;border-left-color:var(--ink)}
-/* cameo gốc 60×48: hiển thị đúng cỡ hoặc phóng số nguyên, giữ nguyên điểm ảnh cho nét */
-.row img,.row .noimg{width:60px;height:48px;border-radius:3px;object-fit:contain;display:block;image-rendering:pixelated}
+/* cameo: ảnh 240×192 phóng bằng Real-ESRGAN từ cameo gốc 60×48, trình duyệt tự thu nhỏ mượt */
+.row img,.row .noimg{width:60px;height:48px;border-radius:3px;object-fit:contain;display:block}
 .noimg{background:repeating-linear-gradient(45deg,#E1E7EC 0 6px,#EEF2F5 6px 12px);border:1px solid var(--line2)}
 .row .t{min-width:0}
 .row .n{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -79,7 +79,7 @@ main{overflow:auto;min-width:0}
 
 /* dossier */
 .dossier{display:grid;grid-template-columns:180px 1fr;gap:20px;align-items:start;padding-bottom:16px;border-bottom:2px solid var(--ink);margin-bottom:6px}
-.dossier .cam{width:180px;height:144px;border-radius:4px;object-fit:contain;display:block;box-shadow:0 0 0 1px #0002;image-rendering:pixelated}
+.dossier .cam{width:180px;height:144px;border-radius:4px;object-fit:contain;display:block;box-shadow:0 0 0 1px #0002}
 .dossier .cam.noimg{border-radius:4px}
 .dossier h1{font-family:var(--head);font-size:32px;line-height:1.05;margin:0;font-weight:700;font-stretch:semi-condensed}
 .meta{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;margin:6px 0 10px;color:var(--muted);font-size:13px}
@@ -156,6 +156,21 @@ dialog::backdrop{background:#17212B99}
 .scope{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;font-size:13px}
 .scope select{padding:4px 6px;border:1px solid var(--line);border-radius:5px}
 .chg{width:100%;border-collapse:collapse;font-size:12.5px}
+/* bảng thay đổi: nhóm theo mục, có ảnh + giải thích */
+.cg{border:1px solid var(--line2);border-radius:8px;margin-bottom:10px;overflow:hidden;background:#fff}
+.cg-h{display:grid;grid-template-columns:60px 1fr auto;gap:10px;align-items:center;padding:8px 10px;background:#F3F6F8;border-bottom:1px solid var(--line2)}
+.cg-h img,.cg-h .badge{width:60px;height:48px;border-radius:3px;object-fit:contain;image-rendering:auto}
+.cg-h .badge{display:grid;place-items:center;background:var(--steel);color:#E9EEF2;font:700 13px var(--head);text-align:center;line-height:1.1;padding:2px}
+.cg-h b{font-size:14px}.cg-h .kind{font-size:12px;color:var(--muted)}
+.cg-h code{font-family:var(--mono);font-size:11px;color:var(--muted);margin-left:6px}
+.cg-h a{color:var(--allied);cursor:pointer;font-size:12.5px;text-decoration:underline;white-space:nowrap}
+.cg-r{display:grid;grid-template-columns:1fr minmax(120px,auto) auto;gap:10px;align-items:center;padding:7px 10px;border-bottom:1px solid var(--line2)}
+.cg-r:last-child{border-bottom:0}
+.cg-r .l b{font-size:13px}.cg-r .l code{font-family:var(--mono);font-size:11px;color:var(--muted);margin-left:6px}
+.cg-r .l .h{font-size:12px;color:var(--muted);line-height:1.35;margin-top:1px}
+.cg-r .ov{white-space:nowrap;font-size:13px;text-align:right}
+.cg-r .ov s{color:var(--muted)}.cg-r .ov b{color:var(--amber)}
+@media (max-width:600px){.cg-r{grid-template-columns:1fr auto}.cg-r .ov{grid-column:1/-1;text-align:left}}
 .chg td{padding:4px 6px;border-bottom:1px solid var(--line2);vertical-align:top}
 .chg td.s{font-family:var(--mono);color:var(--muted)}
 .chg td.o{color:var(--muted);text-decoration:line-through}
@@ -425,7 +440,9 @@ function icon(name){
   name = name.toLowerCase();
   if (iconCache[name] !== undefined) return iconCache[name];
   const b = D.icons[name];
-  return iconCache[name] = b ? 'data:image/png;base64,' + b : null;
+  // nhận dạng định dạng theo đầu chuỗi base64: WebP (UklGR), AVIF (AAAA), PNG (iVBOR)
+  const mime = !b ? '' : b.startsWith('UklGR') ? 'image/webp' : b.startsWith('AAAA') ? 'image/avif' : b.startsWith('/9j/') ? 'image/jpeg' : 'image/png';
+  return iconCache[name] = b ? `data:${mime};base64,` + b : null;
 }
 
 async function loadGame(g, text, label, sourceKind){
@@ -950,13 +967,91 @@ $('#b-restore').onclick = () => {
 };
 
 /* ---------------- danh sách thay đổi ---------------- */
+// giải thích thêm cho các khóa ngoài bảng F / GENERAL_FIELDS
+const KEYDOC = {
+  MaxDebris:['Mảnh vỡ tối đa','Số mảnh vỡ văng ra tối đa khi bị phá hủy / khi nổ. Ít mảnh hơn = nhẹ máy hơn.'],
+  MinDebris:['Mảnh vỡ tối thiểu','Số mảnh vỡ ít nhất văng ra khi bị phá hủy / khi nổ.'],
+  DetailMinFrameRateNormal:['Tự tắt hiệu ứng khi FPS dưới','Khung hình tụt dưới mức này thì game tự bỏ bớt hiệu ứng phụ.'],
+  DetailMinFrameRateMovie:['Tự tắt hiệu ứng khi chiếu phim dưới',''],
+  DetailBufferZoneWidth:['Ngưỡng bật lại hiệu ứng','FPS phải vượt mức tối thiểu cộng số này thì hiệu ứng mới bật lại.'],
+  DamageParticleSystems:['Khói lửa khi hư hại','Hiệu ứng khói/lửa trên công trình bị hư hại.'],
+  Image:['Hình dùng chung','Lấy hình (art) của mục khác.'], Cameo:['Ảnh nút xây',''],
+  Verses:['Hệ số sát thương theo giáp','Phần trăm sát thương lên từng loại giáp: none, flak, plate, light, medium, heavy, wood, steel, concrete, special_1, special_2.'],
+  Explodes:['Nổ khi bị phá',''], Invisible:['Ẩn',''], Sight:['Tầm nhìn','Số ô nhìn thấy xung quanh.'],
+};
+const LISTKIND = {InfantryTypes:'Bộ binh', VehicleTypes:'Xe & tàu', AircraftTypes:'Máy bay', BuildingTypes:'Công trình'};
+const LISTBADGE = {InfantryTypes:'Lính', VehicleTypes:'Xe', AircraftTypes:'Máy bay', BuildingTypes:'Nhà'};
+const SECDOC = {
+  GENERAL:['Luật chung','Quy tắc áp dụng cho cả trận'], AUDIOVISUAL:['Hiển thị & hiệu ứng','Cài đặt hình ảnh, hiệu ứng của game'],
+  COMBATDAMAGE:['Sát thương chung','Quy tắc sát thương cho cả trận'], CRATERULES:['Hộp quà','Hộp quà rơi trên bản đồ'],
+  JUMPJETCONTROLS:['Lính bay (Jumpjet)','Quy tắc di chuyển của lính bay'], POWERUPS:['Hộp quà – phần thưởng',''],
+};
+function keyDoc(key){
+  const K = key.toUpperCase();
+  const f = Object.entries(F).find(([k]) => k.toUpperCase() === K); if (f) return [f[1][0], f[1][1]];
+  const g = GENERAL_FIELDS.find(x => x[1].toUpperCase() === K); if (g) return [g[2], g[3]];
+  const d = Object.entries(KEYDOC).find(([k]) => k.toUpperCase() === K); if (d) return d[1];
+  return [key, ''];
+}
+let secCache = null;
+function describeSec(sec){
+  const ini = cur().ini, S = sec.toUpperCase();
+  if (secCache && secCache.has(S)) return secCache.get(S);
+  let r;
+  const inList = l => ini.list(l).some(x => x.toUpperCase() === S);
+  const listK = Object.keys(LISTKIND).find(inList);
+  const users = (keys, ids) => technoIds().filter(t => keys.some(k => ids.includes((ini.get(t, k) || '').toUpperCase())));
+  if (listK) r = {name:nameOf(sec), kind:LISTKIND[listK] + (buildable(sec) ? '' : (listK === 'BuildingTypes' ? ' · nhà dân / trang trí, không xây được' : ' · không xây được')), group:LISTKIND[listK], img:cameoOf(sec), badge:LISTBADGE[listK], go:'unit:' + sec};
+  else if (SECDOC[S]) r = {name:SECDOC[S][0], kind:SECDOC[S][1], badge:'Luật', go:'all:' + sec};
+  else if (inList('SuperWeaponTypes')) r = {name:(ini.get(sec,'UIName') && D[game].names[ini.get(sec,'UIName').toUpperCase()]) || sec, kind:'Siêu vũ khí', badge:'Siêu VK', go:'all:' + sec};
+  else if (inList('Tiberiums')) r = {name:sec, kind:'Quặng / đá quý', badge:'Quặng', go:'all:' + sec};
+  else if (inList('Countries')) r = {name:sec, kind:'Quốc gia', badge:'Nước', go:'all:' + sec};
+  else if (Object.keys(LISTKIND).concat(['SuperWeaponTypes','Warheads','Projectiles','WeaponTypes','Countries','Tiberiums']).some(l => l.toUpperCase() === S)) r = {name:sec, kind:'Danh sách các mục', badge:'DS', go:'all:' + sec};
+  else {
+    const isWpn = weaponIds().some(w => w.toUpperCase() === S);
+    if (isWpn){
+      const u = users(WEAPON_KEYS, [S]);
+      r = {name:sec, kind:'Vũ khí' + (u.length ? ' của ' + u.slice(0, 3).map(nameOf).join(', ') + (u.length > 3 ? ` và ${u.length - 3} quân khác` : '') : ''), img:u[0] ? cameoOf(u[0]) : null, badge:'Vũ khí', go:'wpn:' + sec};
+    } else if (warheadIds().some(w => w.toUpperCase() === S)){
+      const ws = weaponIds().filter(w => (ini.get(w, 'Warhead') || '').toUpperCase() === S).map(w => w.toUpperCase());
+      const u = users(WEAPON_KEYS, ws);
+      r = {name:sec, kind:'Đầu nổ (quyết định sát thương theo giáp)' + (u.length ? ' · dùng bởi ' + u.slice(0, 3).map(nameOf).join(', ') + (u.length > 3 ? ` và ${u.length - 3} quân khác` : '') : ''), img:u[0] ? cameoOf(u[0]) : null, badge:'Đầu nổ', go:'wh:' + sec};
+    } else if (projectileIds().some(w => w.toUpperCase() === S)) r = {name:sec, kind:'Đầu đạn bay', badge:'Đạn', go:'all:' + sec};
+    else {
+      // mục hình/hiệu ứng (anim, mảnh vỡ…) hoặc mục khác
+      r = {name:sec, kind:ini.get(sec, 'Image') !== undefined || /anim|debris|explo|smoke|fire|spark/i.test(sec) ? 'Hình ảnh / hiệu ứng' : 'Mục khác trong file luật', badge:'Mục', go:'all:' + sec};
+    }
+  }
+  if (!r.group) r.group = r.kind.replace(/ (của|·) .*/, '');
+  if (!secCache) secCache = new Map();
+  secCache.set(S, r); return r;
+}
+function changesHTML(d, mode){
+  const groups = new Map();
+  for (const x of d){ const k = x.sec.toUpperCase(); if (!groups.has(k)) groups.set(k, {sec:x.sec, rows:[]}); groups.get(k).rows.push(x); }
+  secCache = null;
+  const out = []; let n = 0;
+  for (const g of groups.values()){
+    if (n > 800) break;
+    const ds = describeSec(g.sec);
+    const pic = ds.img ? `<img src="${ds.img}" alt="">` : `<div class="badge">${esc(ds.badge || 'Mục')}</div>`;
+    out.push(`<div class="cg"><div class="cg-h">${pic}<div><b>${esc(ds.name)}</b><code>[${esc(g.sec)}]</code><div class="kind">${esc(ds.kind)}</div></div><a data-go="${esc(ds.go)}">Xem</a></div>
+      ${g.rows.map(x => { n++; const [lb, hint] = keyDoc(x.key);
+        return `<div class="cg-r"><div class="l"><b>${esc(lb)}</b><code>${esc(x.key)}</code>${hint ? `<div class="h">${esc(hint)}</div>` : ''}</div>
+          <div class="ov"><s>${esc(x.old ?? '(không có)')}</s> → <b>${esc(x.nv ?? '(đã xóa)')}</b></div>
+          <div>${mode === 'opened' ? `<button class="btn" data-rv="${esc(x.sec)}|${esc(x.key)}">Hoàn lại</button>` : ''}</div></div>`; }).join('')}</div>`);
+  }
+  const cnt = {}; for (const g of groups.values()){ const k = describeSec(g.sec).group; cnt[k] = (cnt[k] || 0) + g.rows.length; }
+  const sum = `<p class="h" style="margin:0 0 10px;color:var(--muted)">${d.length} thay đổi trong ${groups.size} mục: ${Object.entries(cnt).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${esc(k.toLowerCase())} ${v}`).join(' · ')}.</p>`;
+  return sum + out.join('') + (n < d.length ? `<p>… và ${d.length - n} thay đổi nữa.</p>` : '');
+}
 $('#b-changes').onclick = () => {
   const dlg = $('#dlg-changes');
   const draw = mode => {
     const st = cur(); const base = mode === 'official' ? st.official : st.opened;
     const d = diffs(base);
     dlg.innerHTML = `<div class="dh"><h2>Thay đổi</h2><p>So với: <select id="cmp"><option value="opened" ${mode === 'opened' ? 'selected' : ''}>lúc mở / lần lưu gần nhất</option><option value="official" ${mode === 'official' ? 'selected' : ''}>bản chính thức của Westwood</option></select> · ${d.length} dòng khác</p></div>
-      <div class="db">${d.length ? `<table class="chg">${d.slice(0, 800).map(x => `<tr><td class="s">[${esc(x.sec)}] ${esc(x.key)}</td><td class="o">${esc(x.old ?? '(không có)')}</td><td class="v">${esc(x.nv ?? '(đã xóa)')}</td><td>${mode === 'opened' ? `<button class="btn" data-rv="${esc(x.sec)}|${esc(x.key)}">Hoàn lại</button>` : `<a data-go="all:${esc(x.sec)}" style="cursor:pointer;color:var(--allied)">Xem</a>`}</td></tr>`).join('')}</table>${d.length > 800 ? `<p>… và ${d.length - 800} dòng nữa.</p>` : ''}` : '<p>Chưa có thay đổi nào.</p>'}</div>
+      <div class="db">${d.length ? changesHTML(d, mode) : '<p>Chưa có thay đổi nào.</p>'}</div>
       <div class="df"><button class="btn primary" id="cg-close">Đóng</button></div>`;
     $('#cmp', dlg).onchange = e => draw(e.target.value);
     $('#cg-close', dlg).onclick = () => dlg.close();

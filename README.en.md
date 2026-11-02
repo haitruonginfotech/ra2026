@@ -102,6 +102,8 @@ See [`AI/tools/src/README.md`](AI/tools/src/README.md): mingw-w64 for the DLL/EX
 ## 7. Changelog
 
 ### 2026-11-02
+- 🤖 **Unit & building pictures upscaled with AI (Real-ESRGAN x4plus)**: 434 cameos 60×48 → 240×192 (WebP), sharp and smooth in the detail view; the list uses the same images scaled down. The AI invents some detail, so pictures may differ slightly from the originals. Editor file ~4.3 MB.
+- 📋 **Changes dialog with pictures and explanations**: grouped per unit/section, with the cameo (or a Rules / Weapon / Building badge), Vietnamese name, type (e.g. “weapon of Sniper”, “building · civilian/decoration, not buildable”), and a label and explanation for each property; summary line counting changes by type.
 - 🖼️ **Sharper unit & building pictures in the Mod Editor**: re-extracted all 434 original cameos (60×48) from the game files as lossless 8-bit PNG (previously compressed JPEG), shown at native size in the list and at exact ×3 (×2 on phones) with `image-rendering: pixelated`, transparent background.
 - 🔎 **Sharper in-game image**: the blur came from cnc-ddraw upscaling with bilinear filtering (`d3d9linear=true`, `shader=bilinear.glsl`) and stretching (`maintas=false`). The Performance dialog gains a **Sharpness** section (nearest / xBRZ / Lanczos, keep aspect, integer scaling) and a **Hình nét nhất** (Sharpest image) button (screen-native resolution).
 - 🪟 **Windows 11** notes (SmartScreen, Smart App Control, Defender, renderer); re-tested under Wine reporting Windows 11.

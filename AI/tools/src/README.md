@@ -16,6 +16,9 @@
 - Dữ liệu trích từ: expandmd01.mix (rulesmd chính thức YR), expandmd03.mix (rulesmd/artmd mod YR), local.mix/localmd.mix, cameo.mix, cameomd.mix, ecache03/04/5.mix, ra2.csf, ra2md.csf, art.ini, rules.ini (rời).
 - `cameo/extract.py` — đọc mọi file .mix (kể cả mix lồng nhau) trong thư mục game, gom các `*.shp` có tên trong `keys.json` (khóa `RA2DATA.icons`) và `cameo.pal` → `cameos.pkl`. Cần `ra2mix`.
 - `cameo/build_png.py` — giải mã SHP khung 0 thành PNG 8-bit (giữ bảng màu gốc, màu 0 trong suốt). Ảnh có ở nhiều mix thì chọn bản gần ảnh cũ nhất → `new_icons.json` để thay `icons` trong data.js. 434/434 ảnh, ~1,55 MB base64.
+- `cameo/upscale_esrgan.py` — phóng cameo ×4 bằng Real-ESRGAN x4plus (cần `torch` CPU, `spandrel`; trọng số `RealESRGAN_x4plus.pth` tải từ https://github.com/xinntao/Real-ESRGAN/releases/tag/v0.1.0, không lưu trong repo). Tô vùng trong suốt bằng màu kề bên trước khi phóng để không loang màu nền xanh. `python upscale_esrgan.py RealESRGAN_x4plus.pth up4b ""`.
+- `cameo/pack_webp.py` — đóng gói `up4b/*.png` thành WebP q80 base64, thay `icons` trong data.js.
+- `test_changes.js` — kiểm thử bảng Thay đổi (nhóm, ảnh, giải thích, Hoàn lại, Xem).
 - `test1.js`, `test2.js` — kiểm thử Playwright (mở, sửa, mod nhanh, hoàn tác, nhân bản, tải file, chuyển RA2).
 - `test_layout.js` — đo bố cục ở 9 cỡ màn hình (2560 → 390 px): số ô mỗi hàng, cuộn ngang, nút Lưu có hiện không. Chạy: `node test_layout.js ../../RA2_Mod_Editor.html`.
 - `test_sharp.js` — kiểm thử phần **Độ nét hình** (giả lập màn 1920×1080): nút Hình nét nhất, xBRZ tự chuyển OpenGL, chỉ sửa `[ddraw]`, `[game]`, `[gamemd]`.
