@@ -30,7 +30,18 @@ The repository root **is the game folder** (on the author's machine: `E:\games\R
 
 Every other game file in the folder is ignored by `.gitignore`.
 
-## 2. Install
+## 2. Differences from the original
+
+Byte-for-byte comparison with the original repack: **296 game files unchanged**. The repo contains only what was modified or added:
+
+| Type | Files | In git |
+|---|---|---|
+| Modified | `BINKW32.DLL` (replaced by the write guard) | ✅ |
+| Added | `Play_RA2.exe`, `Play_YR.exe`, `README.md`, `README.en.md`, `.gitignore`, `AI/` (23 files) | ✅ |
+| Renamed (original content) | original `BINKW32.DLL` → `binkw32_o.dll`; `cnc-ddraw config.exe` → `cnc-ddraw config.exe.disabled` | ❌ (third-party files) |
+| Removed | `keygen\` (Keygen.exe, RegSetup.exe, fdxra2k.nfo), `LAN-play-serials\` (4× ra2.reg + Woldata.key), `Ra2.exe`, `RA2MD.exe`, `YURI.exe`, `RegSetup.exe`, `SetupReg.exe`, `uninstal.exe`, `uninstal.ini`, `DRVMGT.DLL`, `PATCHGET.DAT`, `patchgetmd.dat`, `PATCHW32.DLL`, `src.7z`, `aqrit.cfg` | ❌ |
+
+## 3. Install
 
 1. Clone the repo into the folder that will hold the game:
    ```
@@ -40,14 +51,14 @@ Every other game file in the folder is ignored by `.gitignore`.
 3. **Do not** overwrite the repo's `BINKW32.DLL`: save the game's own `BINKW32.DLL` as `binkw32_o.dll`.
 4. Rename `cnc-ddraw config.exe` to `cnc-ddraw config.exe.disabled`.
 
-## 3. Playing
+## 4. Playing
 
 - Double-click `Play_YR.exe` (Yuri's Revenge) or `Play_RA2.exe` (Red Alert 2).
 - **Do not** start `game.exe` / `gamemd.exe` directly: the game exits immediately.
 - Registry data the game "writes" is kept in `portable\registry.txt`. Every blocked write outside the folder is logged in `portable\blocked.log`.
 - To uninstall, delete the folder.
 
-## 4. Editing the rules (modding)
+## 5. Editing the rules (modding)
 
 1. Open `AI\tools\RA2_Mod_Editor.html` in **Chrome** or **Edge**.
 2. Click **Mở thư mục game** (Open game folder) and choose the `Ra2026` folder (the one containing `gamemd.exe`).
@@ -59,15 +70,16 @@ Every other game file in the folder is ignored by `.gitignore`.
 
 > **Note:** the repack ships with mods. RA2 uses a loose `rules.ini`; Yuri's Revenge uses `expandmd03.mix` (about 3× faster building, 100% sell refund, 51 new units, Harrier removed). The PDF handbook describes the **official** rules.
 
-## 5. Rebuilding from source
+## 6. Rebuilding from source
 
 See [`AI/tools/src/README.md`](AI/tools/src/README.md): mingw-w64 for the DLL/EXEs, Python + Playwright for the handbook, `template.html` + data for the Mod Editor.
 
 ---
 
-## 6. Changelog
+## 7. Changelog
 
 ### 2026-11-02
+- 📋 The repo keeps only files **modified or added** compared with the original (byte-checked: 296 game files unchanged); added a differences table in section 2.
 - 🔁 **Repository root changed to the `Ra2026` game folder**: `BINKW32.DLL` and `Play_*.exe` sit at the root, `AI/` next to the game files; `.gitignore` allows only project files.
 - 📝 README renamed to `README.md` (VI) and `README.en.md` (EN) so it no longer clashes with the game's own `Readme.txt` (Windows file names are case-insensitive).
 - 🌐 GitHub: EN+VI description and 20 topics for SEO; source, tools and documents published to the repo.
@@ -87,7 +99,7 @@ See [`AI/tools/src/README.md`](AI/tools/src/README.md): mingw-w64 for the DLL/EX
 - 🎮 Built the portable setup: `BINKW32.DLL` guard (virtual registry, blocks writes outside the folder), `Play_RA2.exe` / `Play_YR.exe` launchers; removed keygen, setup tools, SafeDisc driver, original launchers; disabled cnc-ddraw config.
 - ✅ Tested under Wine: the games start without writing to the registry or outside the folder.
 
-## 7. Not yet verified
+## 8. Not yet verified
 
 - Running the game on real Windows with the guard installed.
 - The Mod Editor's Open folder / Save / Restore buttons in real Chrome/Edge.

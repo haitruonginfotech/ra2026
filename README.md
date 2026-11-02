@@ -30,7 +30,18 @@ Gốc repo **chính là thư mục game** (trên máy tác giả: `E:\games\Ra2\
 
 Mọi file game khác trong thư mục đều bị `.gitignore` bỏ qua.
 
-## 2. Cài đặt
+## 2. Khác biệt so với bản gốc
+
+So từng byte với bản repack gốc: **296 file game giữ nguyên**. Repo chỉ chứa phần đã chỉnh sửa hoặc thêm mới:
+
+| Loại | File | Lên git |
+|---|---|---|
+| Chỉnh sửa | `BINKW32.DLL` (thay bằng lớp chặn ghi) | ✅ |
+| Thêm mới | `Play_RA2.exe`, `Play_YR.exe`, `README.md`, `README.en.md`, `.gitignore`, `AI/` (23 file) | ✅ |
+| Đổi tên (nội dung gốc) | `BINKW32.DLL` gốc → `binkw32_o.dll`; `cnc-ddraw config.exe` → `cnc-ddraw config.exe.disabled` | ❌ (file của bên thứ ba) |
+| Đã loại bỏ | `keygen\` (Keygen.exe, RegSetup.exe, fdxra2k.nfo), `LAN-play-serials\` (4× ra2.reg + Woldata.key), `Ra2.exe`, `RA2MD.exe`, `YURI.exe`, `RegSetup.exe`, `SetupReg.exe`, `uninstal.exe`, `uninstal.ini`, `DRVMGT.DLL`, `PATCHGET.DAT`, `patchgetmd.dat`, `PATCHW32.DLL`, `src.7z`, `aqrit.cfg` | ❌ |
+
+## 3. Cài đặt
 
 1. Clone repo vào thư mục sẽ chứa game:
    ```
@@ -40,14 +51,14 @@ Mọi file game khác trong thư mục đều bị `.gitignore` bỏ qua.
 3. **Không** ghi đè `BINKW32.DLL` của repo: lưu file `BINKW32.DLL` của game với tên `binkw32_o.dll`.
 4. Đổi tên `cnc-ddraw config.exe` thành `cnc-ddraw config.exe.disabled`.
 
-## 3. Chơi game
+## 4. Chơi game
 
 - Bấm đúp `Play_YR.exe` (Yuri's Revenge) hoặc `Play_RA2.exe` (Red Alert 2).
 - **Không** mở trực tiếp `game.exe` / `gamemd.exe`: game sẽ tự thoát.
 - Những gì game "ghi" vào registry nằm ở `portable\registry.txt`. Mọi lần bị chặn ghi ra ngoài được ghi vào `portable\blocked.log`.
 - Gỡ game = xóa thư mục.
 
-## 4. Chỉnh luật chơi (mod)
+## 5. Chỉnh luật chơi (mod)
 
 1. Mở `AI\tools\RA2_Mod_Editor.html` bằng **Chrome** hoặc **Edge**.
 2. Bấm **Mở thư mục game** rồi chọn thư mục `Ra2026` (thư mục có `gamemd.exe`).
@@ -59,15 +70,16 @@ Mọi file game khác trong thư mục đều bị `.gitignore` bỏ qua.
 
 > **Lưu ý:** bản repack đã có sẵn mod. RA2 dùng `rules.ini` rời; Yuri's Revenge dùng `expandmd03.mix` (xây nhanh ~3 lần, bán hoàn 100%, thêm 51 quân, bỏ Harrier). Sổ tay PDF mô tả **luật chính thức**.
 
-## 5. Build lại từ mã nguồn
+## 6. Build lại từ mã nguồn
 
 Xem [`AI/tools/src/README.md`](AI/tools/src/README.md): mingw-w64 cho DLL/EXE, Python + Playwright cho sổ tay, `template.html` + dữ liệu cho Mod Editor.
 
 ---
 
-## 6. Lịch sử thay đổi
+## 7. Lịch sử thay đổi
 
 ### 2026-11-02
+- 📋 Repo chỉ giữ file **đã chỉnh sửa hoặc thêm mới** so với bản gốc (đã đối chiếu từng byte: 296 file game giữ nguyên); thêm bảng khác biệt ở mục 2.
 - 🔁 **Đổi gốc repo thành thư mục game `Ra2026`**: `BINKW32.DLL`, `Play_*.exe` nằm ở gốc, `AI/` nằm cạnh file game; `.gitignore` chỉ cho phép đúng các file của dự án.
 - 📝 README đổi sang `README.md` (VI) và `README.en.md` (EN), để không trùng với `Readme.txt` gốc của game (Windows không phân biệt hoa/thường).
 - 🌐 GitHub: mô tả EN+VI và 20 topics cho SEO; đưa mã nguồn, công cụ, tài liệu lên repo.
@@ -87,7 +99,7 @@ Xem [`AI/tools/src/README.md`](AI/tools/src/README.md): mingw-w64 cho DLL/EXE, P
 - 🎮 Tạo bản portable: lớp chặn `BINKW32.DLL` (registry ảo, chặn ghi file ra ngoài), trình mở `Play_RA2.exe` / `Play_YR.exe`; loại keygen, công cụ cài đặt, driver SafeDisc, trình mở gốc; tắt cnc-ddraw config.
 - ✅ Thử trên Wine: game khởi động, không ghi registry hay file ra ngoài.
 
-## 7. Chưa kiểm chứng
+## 8. Chưa kiểm chứng
 
 - Chạy game trên Windows thật sau khi cài lớp chặn.
 - Các nút Mở thư mục / Lưu / Khôi phục của Mod Editor trên Chrome/Edge thật.
