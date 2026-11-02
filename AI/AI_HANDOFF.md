@@ -83,3 +83,17 @@ _Cập nhật: 2026-11-02 (Asia/Ho_Chi_Minh) · Agent: Claude (Cowork, cloud ses
 - Đối chiếu từng byte Ra2026 với `ra2-yuris-revenge[taira2.org]`: 296 file giữ nguyên; chỉnh sửa 1 (`BINKW32.DLL`); thêm mới `Play_RA2.exe`, `Play_YR.exe`, `.gitignore`, `README.md`, `README.en.md`, `AI/` (23); đổi tên (không lên git) `binkw32_o.dll`, `cnc-ddraw config.exe.disabled`; đã loại 25 file (keygen, LAN serials, launcher gốc, setup, SafeDisc, patcher, src.7z, aqrit.cfg).
 - GitHub `main` @ `286b1b5`: đúng 28 file trên, README thêm mục “Khác biệt so với bản gốc”. Đã clone lại kiểm chứng.
 - Repo cục bộ Ra2026 vẫn ở `a65885b` (chứa file game, chưa push) → người dùng cần `git fetch origin` + `git reset origin/main`.
+
+## 2026-11-02 11:00 — Mod Editor: hộp Hiệu năng (giảm giật khi đông quân)
+- Người dùng hỏi lag khi đông quân có phải do chạy 1 luồng: đúng (engine 1 luồng, không có mã nguồn nên không đa luồng hóa được); nguyên nhân trực tiếp là chọn mục tiêu, tìm đường, vẽ voxel, hiệu ứng; bản mod xây nhanh ×3 làm trận đông hơn.
+- Người dùng chốt: chỉnh trong giao diện HTML rồi ghi file, không mở file sửa tay.
+- Thêm nút **Hiệu năng** (`#b-perf`, `openPerf/perfPlan/perfSummary` trong `template.html`):
+  - `ddraw.ini` (cnc-ddraw 4.4.3): renderer, maxfps, vsync → ghi `[ddraw]` + `[game]` + `[gamemd]` (mục riêng ghi đè mục chung); singlecpu, fullscreen/windowed → `[ddraw]`. Chỉ ghi khi khác giá trị đang có hiệu lực.
+  - `RA2MD.INI` / `RA2.INI`: `[Video] ScreenWidth/ScreenHeight`, `[Options] DetailLevel`.
+  - Luật (qua `apply()`, hoàn tác được, rồi mở hộp Lưu): MaxDebris/MinDebris ≤3/≤1 hoặc 0; `[AudioVisual] DetailMinFrameRateNormal`; xóa `DamageParticleSystems`.
+  - Sao lưu vào `mod_backups/` trước khi ghi; giữ CRLF, Windows-1252.
+- Hiện trạng máy: `ddraw.ini` có `singlecpu=true`, `[game]/[gamemd] maxfps=60`, `renderer=automatic`; RA2MD.INI 1440×900 DetailLevel=2; RA2.INI 1360×768 DetailLevel=2. **Chưa thay đổi gì** trên máy, người dùng tự bấm Áp dụng.
+- Kiểm chứng: Playwright + OPFS giả lập thư mục với `ddraw.ini`/`RA2MD.INI`/`RA2.INI` thật: mở hộp không đổi gì → “Chưa có gì thay đổi”; đề xuất → ddraw.ini chỉ đổi renderer (3 dòng) + singlecpu, RA2MD.INI DetailLevel, rulesmd.ini 566 giá trị (chỉ MaxDebris/MinDebris/DetailMinFrameRateNormal, byte khác giữ nguyên), sao lưu đúng, không lỗi console; test2.js cũ vẫn qua; giao diện 1440 px và 390 px ổn.
+- CHƯA kiểm chứng: hiệu quả thật trong game trên Windows; singlecpu=false có gây treo không; DamageParticleSystems rỗng trong game.
+- Tag `v2026.11.02`: git push tag từ cloud thất bại; form tạo release đã điền sẵn trong Chrome, người dùng tự bấm Publish (hệ thống chặn tôi bấm).
+

@@ -68,6 +68,16 @@ So từng byte với bản repack gốc: **296 file game giữ nguyên**. Repo c
 
 `Ctrl+Z` để hoàn tác. File cũ được sao lưu vào `mod_backups\`. Nút **Khôi phục…** đưa game về bản chính thức hoặc bản mod có sẵn. Chơi LAN: mọi máy phải dùng cùng file luật.
 
+### Giảm giật khi đông quân
+
+Engine RA2/YR chạy logic game trên **một luồng**, nên trận càng đông quân thì càng dễ giật, máy nhiều nhân cũng không đỡ. Trong Mod Editor, bấm **Hiệu năng**:
+
+- **Hiển thị** (`ddraw.ini`, dùng chung 2 game): bộ vẽ Direct3D 9, giới hạn 60 FPS, V-Sync, cho phần vẽ hình chạy trên nhân CPU khác (`singlecpu=false`), chế độ màn hình.
+- **Thiết lập trong game** (`RA2MD.INI` / `RA2.INI`): độ phân giải, mức chi tiết. Thoát game trước khi áp dụng.
+- **Luật chơi**: giảm hoặc tắt mảnh vỡ khi nổ, cho game tự tắt hiệu ứng sớm hơn khi tụt FPS, bỏ khói lửa trên công trình hư hại.
+
+Nút **Đề xuất cho trận đông quân** điền sẵn cấu hình khuyên dùng. Bấm **Áp dụng**: file cấu hình được ghi thẳng vào thư mục game (bản cũ sao lưu vào `mod_backups\`), phần luật chơi chuyển sang bước **Lưu vào game** và hoàn tác được bằng `Ctrl+Z`. Nếu game bị treo hay văng sau khi bật “Dùng nhiều nhân CPU”, chọn lại “Không”.
+
 > **Lưu ý:** bản repack đã có sẵn mod. RA2 dùng `rules.ini` rời; Yuri's Revenge dùng `expandmd03.mix` (xây nhanh ~3 lần, bán hoàn 100%, thêm 51 quân, bỏ Harrier). Sổ tay PDF mô tả **luật chính thức**.
 
 ## 6. Build lại từ mã nguồn
@@ -79,6 +89,8 @@ Xem [`AI/tools/src/README.md`](AI/tools/src/README.md): mingw-w64 cho DLL/EXE, P
 ## 7. Lịch sử thay đổi
 
 ### 2026-11-02
+- ⚡ **Mod Editor → Hiệu năng**: chỉnh `ddraw.ini` (bộ vẽ, FPS, V-Sync, nhiều nhân CPU, chế độ màn hình), độ phân giải và mức chi tiết trong `RA2MD.INI`/`RA2.INI`, giảm mảnh vỡ/hiệu ứng trong luật chơi; ghi thẳng vào file, có sao lưu. Kèm nút cấu hình đề xuất cho trận đông quân.
+- 🏷️ Mốc phiên bản `v2026.11.02` (baseline) để quay lại khi cần.
 - 📋 Repo chỉ giữ file **đã chỉnh sửa hoặc thêm mới** so với bản gốc (đã đối chiếu từng byte: 296 file game giữ nguyên); thêm bảng khác biệt ở mục 2.
 - 🔁 **Đổi gốc repo thành thư mục game `Ra2026`**: `BINKW32.DLL`, `Play_*.exe` nằm ở gốc, `AI/` nằm cạnh file game; `.gitignore` chỉ cho phép đúng các file của dự án.
 - 📝 README đổi sang `README.md` (VI) và `README.en.md` (EN), để không trùng với `Readme.txt` gốc của game (Windows không phân biệt hoa/thường).
@@ -102,6 +114,7 @@ Xem [`AI/tools/src/README.md`](AI/tools/src/README.md): mingw-w64 cho DLL/EXE, P
 ## 8. Chưa kiểm chứng
 
 - Chạy game trên Windows thật sau khi cài lớp chặn.
-- Các nút Mở thư mục / Lưu / Khôi phục của Mod Editor trên Chrome/Edge thật.
+- Các nút Mở thư mục / Lưu / Khôi phục / Hiệu năng của Mod Editor trên Chrome/Edge thật (đã thử bằng thư mục giả lập trong Chromium).
+- Mức giảm giật thực tế của từng tùy chọn Hiệu năng; “Bỏ khói lửa trên công trình” chưa thử trong game.
 
 Chi tiết: [`AI/AI_HANDOFF.md`](AI/AI_HANDOFF.md).

@@ -68,6 +68,16 @@ Byte-for-byte comparison with the original repack: **296 game files unchanged**.
 
 `Ctrl+Z` undoes. Previous files are backed up in `mod_backups\`. **Khôi phục…** (Restore) returns the game to the official or the bundled mod rules. LAN play: every PC must use the same rules file.
 
+### Reducing lag in big battles
+
+The RA2/YR engine runs the game logic on **a single thread**, so large battles stutter no matter how many CPU cores you have. In the Mod Editor, click **Hiệu năng** (Performance):
+
+- **Display** (`ddraw.ini`, shared by both games): Direct3D 9 renderer, 60 FPS cap, V-Sync, let the renderer run on another CPU core (`singlecpu=false`), screen mode.
+- **In-game settings** (`RA2MD.INI` / `RA2.INI`): resolution, detail level. Quit the game before applying.
+- **Rules**: reduce or remove explosion debris, let the game drop effects sooner when FPS falls, remove smoke/fire on damaged buildings.
+
+**Đề xuất cho trận đông quân** (Recommended for big battles) fills in suggested values. **Áp dụng** (Apply) writes the config files straight into the game folder (old copies go to `mod_backups\`); rule changes go through **Lưu vào game** (Save to game) and can be undone with `Ctrl+Z`. If the game hangs or crashes with multiple CPU cores enabled, switch it back to “Không” (No).
+
 > **Note:** the repack ships with mods. RA2 uses a loose `rules.ini`; Yuri's Revenge uses `expandmd03.mix` (about 3× faster building, 100% sell refund, 51 new units, Harrier removed). The PDF handbook describes the **official** rules.
 
 ## 6. Rebuilding from source
@@ -79,6 +89,8 @@ See [`AI/tools/src/README.md`](AI/tools/src/README.md): mingw-w64 for the DLL/EX
 ## 7. Changelog
 
 ### 2026-11-02
+- ⚡ **Mod Editor → Performance**: edit `ddraw.ini` (renderer, FPS cap, V-Sync, multi-core, screen mode), resolution and detail level in `RA2MD.INI`/`RA2.INI`, and cut debris/effects in the rules; written straight to the files with backups. Includes a recommended preset for big battles.
+- 🏷️ Version milestone `v2026.11.02` (baseline) to roll back to.
 - 📋 The repo keeps only files **modified or added** compared with the original (byte-checked: 296 game files unchanged); added a differences table in section 2.
 - 🔁 **Repository root changed to the `Ra2026` game folder**: `BINKW32.DLL` and `Play_*.exe` sit at the root, `AI/` next to the game files; `.gitignore` allows only project files.
 - 📝 README renamed to `README.md` (VI) and `README.en.md` (EN) so it no longer clashes with the game's own `Readme.txt` (Windows file names are case-insensitive).
@@ -102,6 +114,7 @@ See [`AI/tools/src/README.md`](AI/tools/src/README.md): mingw-w64 for the DLL/EX
 ## 8. Not yet verified
 
 - Running the game on real Windows with the guard installed.
-- The Mod Editor's Open folder / Save / Restore buttons in real Chrome/Edge.
+- The Mod Editor's Open folder / Save / Restore / Performance buttons in real Chrome/Edge (tested with a simulated folder in Chromium).
+- The real-world lag reduction of each Performance option; removing building smoke/fire has not been tried in-game.
 
 Details: [`AI/AI_HANDOFF.md`](AI/AI_HANDOFF.md).

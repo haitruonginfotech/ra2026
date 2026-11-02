@@ -158,6 +158,12 @@ dialog::backdrop{background:#17212B99}
 .chg td.s{font-family:var(--mono);color:var(--muted)}
 .chg td.o{color:var(--muted);text-decoration:line-through}
 .chg td.v{color:var(--amber);font-weight:600}
+.qgrid.pg{grid-template-columns:1fr 250px}
+.qgrid select{padding:5px 6px;border:1px solid var(--line);border-radius:5px;width:100%;background:#fff}
+.ph{font-family:var(--head);font-size:16px;font-weight:700;margin:16px 0 8px;padding-top:12px;border-top:1px solid var(--line2)}
+.ph small{font-family:var(--body);font-weight:400;font-size:12.5px;color:var(--muted);margin-left:6px}
+.prev{background:#F3F6F8;border:1px solid var(--line2);border-radius:8px;padding:8px 12px;font-size:13px;margin-top:14px}
+@media (max-width:600px){.qgrid,.qgrid.pg{grid-template-columns:1fr}}
 .warn{background:#FFF3D1;border:1px solid var(--amber-line);border-radius:8px;padding:9px 12px;font-size:13px;margin:10px 0}
 .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:8px;font-size:14px;box-shadow:0 8px 30px #0004;z-index:50;max-width:min(680px,calc(100% - 32px))}
 .toast.err{background:var(--danger)}
@@ -183,6 +189,7 @@ dialog::backdrop{background:#17212B99}
   <div class="src" id="src">Chưa mở thư mục game</div>
   <button class="btn" id="b-folder">Mở thư mục game</button>
   <button class="btn" id="b-quick">Mod nhanh</button>
+  <button class="btn" id="b-perf" title="Giảm giật khi đông quân">Hiệu năng</button>
   <button class="btn" id="b-undo" title="Hoàn tác (Ctrl+Z)" disabled>Hoàn tác</button>
   <button class="btn" id="b-changes">Thay đổi<span class="count" id="nchg">0</span></button>
   <button class="btn" id="b-restore">Khôi phục…</button>
@@ -205,6 +212,7 @@ dialog::backdrop{background:#17212B99}
 <dialog id="dlg-save"></dialog>
 <dialog id="dlg-restore"></dialog>
 <dialog id="dlg-clone"></dialog>
+<dialog id="dlg-perf"></dialog>
 <input type="file" id="filein" accept=".ini" class="hidden">
 
 <script>/*DATA*/</script>
@@ -1014,6 +1022,146 @@ function quickApply(m){
   return apply(ops);
 }
 
+
+/* ---------------- hiệu năng ---------------- */
+// cnc-ddraw: mục [game] (RA2) và [gamemd] (YR) ghi đè mục chung [ddraw]
+const DD_GAME_KEYS = ['renderer','maxfps','vsync'];
+const INI_FILE = {yr:'RA2MD.INI', ra2:'RA2.INI'};
+const RESOLUTIONS = ['1024x768','1280x720','1280x800','1280x1024','1360x768','1366x768','1440x900','1600x900','1680x1050','1920x1080'];
+const MODES = {borderless:['true','true'], window:['false','true'], full:['true','false']};
+let PF = null;
+async function readIni(name){ const t = dir ? await fileText(name) : null; return t === null ? null : new Ini(t); }
+function ddGet(ini, key){ for (const s of DD_GAME_KEYS.includes(key) ? ['gamemd','ddraw'] : ['ddraw']){ const v = ini.get(s, key); if (v !== undefined) return v; } }
+function selHTML(id, opts, v){
+  const lv = String(v ?? '').toLowerCase(), known = opts.some(o => String(o[0]).toLowerCase() === lv);
+  return `<select id="${id}">${opts.map(([k, l]) => `<option value="${esc(k)}" ${String(k).toLowerCase() === lv ? 'selected' : ''}>${esc(l)}</option>`).join('')}${v !== undefined && v !== '' && !known ? `<option value="${esc(v)}" selected>${esc(v)} (đang dùng)</option>` : ''}</select>`;
+}
+const prow = (label, hint, ctl) => `<div><b>${label}</b>${hint ? `<div class="h">${hint}</div>` : ''}</div>${ctl}`;
+function debrisCount(){ const ini = cur().ini; let n = 0; for (const k of ini.order){ const s = ini.secs.get(k); if (parseInt(ini.get(s.name, 'MaxDebris')) > 0) n++; } return n; }
+
+async function openPerf(){
+  PF = {dd: await readIni('ddraw.ini'), ini: {yr: await readIni(INI_FILE.yr), ra2: await readIni(INI_FILE.ra2)}};
+  const dlg = $('#dlg-perf'), dd = PF.dd, ini = cur().ini;
+  const gname = game === 'yr' ? "Yuri's Revenge" : 'Red Alert 2';
+  let disp = '';
+  if (!dir){
+    disp = `<div class="warn">Chưa mở thư mục Ra2026 nên chưa đọc được cấu hình hiển thị. ${FS ? '<button class="btn" id="pf-folder">Mở thư mục Ra2026</button>' : 'Hãy dùng Chrome hoặc Edge.'}</div>`;
+  } else if (!dd){
+    disp = '<div class="warn">Không thấy file ddraw.ini trong thư mục game.</div>';
+  } else {
+    const fs = (dd.get('ddraw', 'fullscreen') || '').toLowerCase(), win = (dd.get('ddraw', 'windowed') || '').toLowerCase();
+    const mode = Object.keys(MODES).find(m => MODES[m][0] === fs && MODES[m][1] === win) || 'borderless';
+    disp = `<div class="qgrid pg">
+      ${prow('Bộ vẽ hình', 'Direct3D 9 dùng card đồ họa, nhẹ nhất trên Windows. GDI vẽ bằng CPU, chỉ dùng khi bị lỗi hình.', selHTML('pf-renderer', [['automatic','Tự động (D3D9 → OpenGL → GDI)'],['direct3d9','Direct3D 9 (khuyên dùng)'],['opengl','OpenGL'],['gdi','GDI (chậm)']], ddGet(dd, 'renderer')))}
+      ${prow('Giới hạn khung hình vẽ', 'Chỉ giới hạn số lần vẽ lên màn hình, không đổi tốc độ game. 60 là đủ mượt và đỡ tốn CPU.', selHTML('pf-maxfps', [['60','60 FPS'],['30','30 FPS'],['-1','Theo tần số màn hình'],['0','Không giới hạn']], ddGet(dd, 'maxfps')))}
+      ${prow('V-Sync', 'Bật để hết xé hình, nhưng chuột/lệnh có thể trễ một chút.', selHTML('pf-vsync', [['false','Tắt'],['true','Bật']], ddGet(dd, 'vsync')))}
+      ${prow('Dùng nhiều nhân CPU', 'Game vẫn chạy 1 luồng, nhưng phần vẽ hình của cnc-ddraw là luồng riêng: cho nó chạy nhân khác sẽ đỡ tranh CPU. Nếu game bị treo hay văng, chọn lại “Không”.', selHTML('pf-singlecpu', [['true','Không (ép 1 nhân, mặc định)'],['false','Có (nên thử khi đông quân)']], ddGet(dd, 'singlecpu')))}
+      ${prow('Chế độ màn hình', '', selHTML('pf-mode', [['borderless','Toàn màn hình không viền'],['window','Cửa sổ'],['full','Toàn màn hình độc quyền']], mode))}
+    </div>`;
+    const gameRows = ['yr','ra2'].filter(g => PF.ini[g]).map(g => {
+      const f = PF.ini[g], gn = g === 'yr' ? 'YR' : 'RA2';
+      const w = f.get('Video', 'ScreenWidth'), h = f.get('Video', 'ScreenHeight');
+      return prow(`Độ phân giải ${gn}`, 'Nhỏ hơn = ít ô bản đồ phải vẽ hơn, nhẹ hơn. cnc-ddraw vẫn phóng to cho vừa màn hình.', selHTML('pf-res-' + g, RESOLUTIONS.map(r => [r, r.replace('x', ' × ')]), w && h ? `${w}x${h}` : undefined))
+        + prow(`Mức chi tiết ${gn}`, 'Thấp bớt các hiệu ứng phụ (khói, bóng, ánh sáng).', selHTML('pf-det-' + g, [['0','Thấp'],['1','Vừa'],['2','Cao']], f.get('Options', 'DetailLevel')));
+    }).join('');
+    if (gameRows) disp += `<div class="ph">Thiết lập trong game<small>${['yr','ra2'].filter(g => PF.ini[g]).map(g => INI_FILE[g]).join(', ')}</small></div><div class="qgrid pg">${gameRows}</div>
+      <div class="warn">Hãy thoát game trước khi áp dụng: game tự ghi lại ${INI_FILE.yr} / ${INI_FILE.ra2} khi thoát.</div>`;
+  }
+  const detNow = ini.get('AudioVisual', 'DetailMinFrameRateNormal');
+  const dmgN = ini.order.filter(k => (ini.get(ini.secs.get(k).name, 'DamageParticleSystems') || '').trim()).length;
+  dlg.innerHTML = `<div class="dh"><h2>Hiệu năng</h2><p>Giảm giật khi đông quân. Chọn ở đây rồi bấm <b>Áp dụng</b>: cấu hình được ghi thẳng vào file trong thư mục game, bản cũ sao lưu vào mod_backups.</p></div>
+   <div class="db">
+    <div class="presets"><button id="pf-reco">Đề xuất cho trận đông quân</button></div>
+    <div class="ph" style="border-top:0;padding-top:0;margin-top:4px">Hiển thị<small>ddraw.ini, dùng chung 2 game</small></div>${disp}
+    <div class="ph">Luật chơi<small>${gname} · ${esc(cur().label)}</small></div>
+    <div class="qgrid pg">
+      ${prow('Mảnh vỡ khi nổ', `Mỗi mảnh vỡ là một vật thể bay có tính va chạm; trận đông quân sinh ra hàng trăm mảnh. Có ${debrisCount()} mục đang sinh mảnh vỡ.`, selHTML('pf-debris', [['keep','Giữ nguyên'],['reduce','Giảm (tối đa 3 mảnh)'],['off','Tắt hẳn']], 'keep'))}
+      ${prow('Tự tắt hiệu ứng khi FPS dưới', `Game tự bỏ bớt hiệu ứng khi khung hình tụt dưới mức này. Gốc 15; đặt 30 để game giảm tải sớm hơn.${detNow !== undefined ? ' Hiện tại: ' + esc(detNow) + '.' : ''}`, `<input id="pf-detfps" inputmode="numeric" value="${esc(detNow ?? '')}" placeholder="15">`)}
+      ${prow('Khói lửa trên công trình hư hại', `${dmgN} mục đang có khói/lửa khi bị hư hại.`, selHTML('pf-smoke', [['keep','Giữ nguyên'],['remove','Bỏ (nhẹ hơn, chưa thử trong game)']], 'keep'))}
+    </div>
+    <p class="h" style="color:var(--muted);font-size:12.5px;margin:8px 0 0">Tốc độ xây nằm ở mục <b>Luật chung</b>. Xây càng nhanh thì càng dễ có trận đông quân.</p>
+    <div class="prev" id="pf-prev"></div></div>
+   <div class="df"><button class="btn" id="pf-cancel">Đóng</button><button class="btn primary" id="pf-go">Áp dụng</button></div>`;
+  dlg.showModal();
+  const upd = () => { $('#pf-prev').innerHTML = perfSummary(perfPlan()); };
+  $$('select,input', dlg).forEach(x => { x.onchange = upd; x.oninput = upd; });
+  upd();
+  $('#pf-folder', dlg)?.addEventListener('click', async () => { if (await pickFolder()){ updateSrc(); dlg.close(); openPerf(); } });
+  $('#pf-reco').onclick = () => {
+    const setv = (id, v) => { const el = $('#' + id); if (el) el.value = v; };
+    setv('pf-renderer', 'direct3d9'); setv('pf-maxfps', '60'); setv('pf-vsync', 'false'); setv('pf-singlecpu', 'false');
+    setv('pf-debris', 'reduce'); setv('pf-detfps', '30');
+    upd(); toast('Đã điền cấu hình đề xuất. Xem lại rồi bấm Áp dụng.');
+  };
+  $('#pf-cancel').onclick = () => dlg.close();
+  $('#pf-go').onclick = async () => {
+    const plan = perfPlan();
+    if (plan.bad){ toast(plan.bad, true); return; }
+    if (!Object.keys(plan.files).length && !plan.ops.length){ toast('Không có gì thay đổi.'); return; }
+    const written = [];
+    try {
+      for (const [name, f] of Object.entries(plan.files)){ const b = await backup(name); await writeFile(name, f.ini.text()); written.push(name + (b ? '' : ' (mới)')); }
+    } catch (err){ toast('Không ghi được: ' + err.message, true); return; }
+    const n = plan.ops.length ? apply(plan.ops) : 0;
+    dlg.close();
+    if (n){ toast(`${written.length ? 'Đã ghi ' + written.join(', ') + '. ' : ''}Đã sửa ${n} giá trị luật, giờ lưu file luật.`); openSave(); }
+    else toast(`Đã ghi ${written.join(', ')} (bản cũ trong mod_backups). Mở lại game để thấy thay đổi.`);
+  };
+}
+function perfPlan(){
+  const v = id => { const el = $('#' + id); return el ? el.value.trim() : undefined; };
+  const plan = {files:{}, ops:[], keys:{}};
+  if (PF && PF.dd){
+    const c = new Ini(PF.dd.text()), ch = new Set();
+    const put = (s, k, val) => { if (val === undefined || (c.get(s, k) ?? '').toLowerCase() === val.toLowerCase()) return; c.set(s, k, val); ch.add(k); };
+    // chỉ ghi khi khác giá trị đang có hiệu lực của RA2 ([game]) hoặc YR ([gamemd])
+    const eff = (s, k) => (c.get(s, k) ?? c.get('ddraw', k) ?? '').toLowerCase();
+    DD_GAME_KEYS.forEach(k => { const val = v('pf-' + k); if (val === undefined) return;
+      if (['game','gamemd'].every(s => eff(s, k) === val.toLowerCase())) return;
+      put('ddraw', k, val); ['game','gamemd'].forEach(s => c.has(s) && put(s, k, val)); });
+    put('ddraw', 'singlecpu', v('pf-singlecpu'));
+    const m = MODES[v('pf-mode')]; if (m){ put('ddraw', 'fullscreen', m[0]); put('ddraw', 'windowed', m[1]); }
+    if (ch.size){ plan.files['ddraw.ini'] = {ini:c}; plan.keys['ddraw.ini'] = [...ch]; }
+  }
+  for (const g of ['yr','ra2']){
+    const src = PF && PF.ini[g]; if (!src) continue;
+    const c = new Ini(src.text()), ch = new Set();
+    const put = (s, k, val) => { if (val === undefined || (c.get(s, k) ?? '') === val) return; c.set(s, k, val); ch.add(k); };
+    const r = v('pf-res-' + g); if (r && /^\d+x\d+$/.test(r)){ const [w, h] = r.split('x'); put('Video', 'ScreenWidth', w); put('Video', 'ScreenHeight', h); }
+    put('Options', 'DetailLevel', v('pf-det-' + g));
+    if (ch.size){ plan.files[INI_FILE[g]] = {ini:c}; plan.keys[INI_FILE[g]] = [...ch]; }
+  }
+  const ini = cur().ini, deb = v('pf-debris');
+  if (deb && deb !== 'keep'){
+    const capMax = deb === 'off' ? 0 : 3, capMin = deb === 'off' ? 0 : 1;
+    for (const k of ini.order){
+      const s = ini.secs.get(k);
+      for (const [kk, cap] of [['MAXDEBRIS', capMax], ['MINDEBRIS', capMin]]){
+        if (!s.keys.has(kk)) continue;
+        const n = parseInt(ini.get(s.name, kk));
+        if (n > cap) plan.ops.push({sec:s.name, key:s.keys.get(kk).key, val:cap});
+      }
+    }
+  }
+  const df = v('pf-detfps');
+  if (df){
+    const n = parseInt(df);
+    if (!(n >= 5 && n <= 60)) plan.bad = 'Mức FPS tự tắt hiệu ứng phải từ 5 đến 60.';
+    else if (String(n) !== String(parseInt(ini.get('AudioVisual', 'DetailMinFrameRateNormal')))) plan.ops.push({sec:'AudioVisual', key:'DetailMinFrameRateNormal', val:n});
+  }
+  if (v('pf-smoke') === 'remove'){
+    for (const k of ini.order){ const s = ini.secs.get(k); if ((ini.get(s.name, 'DamageParticleSystems') || '').trim()) plan.ops.push({sec:s.name, key:s.keys.get('DAMAGEPARTICLESYSTEMS').key, val:''}); }
+  }
+  return plan;
+}
+function perfSummary(p){
+  if (p.bad) return `<span style="color:var(--danger)">${esc(p.bad)}</span>`;
+  const parts = Object.entries(p.keys).map(([f, ks]) => `<b>${esc(f)}</b> (${ks.map(esc).join(', ')})`);
+  if (p.ops.length) parts.push(`<b>${esc(D[game].file)}</b>: ${p.ops.length} giá trị luật (ghi khi bấm Lưu ở bước sau, hoàn tác được)`);
+  return parts.length ? 'Sẽ ghi: ' + parts.join(' · ') : 'Chưa có gì thay đổi so với hiện tại.';
+}
+$('#b-perf').onclick = openPerf;
+
 /* ---------------- nhân bản ---------------- */
 function openClone(id){
   const dlg = $('#dlg-clone'), ini = cur().ini;
@@ -1048,7 +1196,7 @@ function toast(msg, err){
 /* ---------------- khởi động ---------------- */
 (async function init(){
   $('#empty').innerHTML = `<h2>Chỉnh luật chơi Red Alert 2 & Yuri's Revenge</h2>
-    <p>Chọn quân ở cột trái để sửa giá, máu, tốc độ, vũ khí; dùng <b>Mod nhanh</b> để nhân hàng loạt; bấm <b>Lưu vào game</b> để ghi file luật vào thư mục Ra2026.</p>
+    <p>Chọn quân ở cột trái để sửa giá, máu, tốc độ, vũ khí; dùng <b>Mod nhanh</b> để nhân hàng loạt; <b>Hiệu năng</b> để giảm giật khi đông quân; bấm <b>Lưu vào game</b> để ghi file luật vào thư mục Ra2026.</p>
     <p>Mọi thay đổi có thể hoàn tác (Ctrl+Z) và file cũ luôn được sao lưu trong thư mục <b>mod_backups</b>.</p>`;
   if (typeof DecompressionStream === 'undefined'){ toast('Trình duyệt quá cũ. Hãy mở bằng Chrome hoặc Edge bản mới.', true); return; }
   const h = FS ? await loadHandle() : null;
