@@ -14,6 +14,8 @@
 ## mod-editor/
 - `template.html` — mã của `AI\tools\RA2_Mod_Editor.html`; dòng `/*DATA*/` được thay bằng `window.RA2DATA=…` (luật gốc/mod gzip+base64, bảng art→cameo, tên CSF, icon cameo JPEG).
 - Dữ liệu trích từ: expandmd01.mix (rulesmd chính thức YR), expandmd03.mix (rulesmd/artmd mod YR), local.mix/localmd.mix, cameo.mix, cameomd.mix, ecache03/04/5.mix, ra2.csf, ra2md.csf, art.ini, rules.ini (rời).
+- `cameo/extract.py` — đọc mọi file .mix (kể cả mix lồng nhau) trong thư mục game, gom các `*.shp` có tên trong `keys.json` (khóa `RA2DATA.icons`) và `cameo.pal` → `cameos.pkl`. Cần `ra2mix`.
+- `cameo/build_png.py` — giải mã SHP khung 0 thành PNG 8-bit (giữ bảng màu gốc, màu 0 trong suốt). Ảnh có ở nhiều mix thì chọn bản gần ảnh cũ nhất → `new_icons.json` để thay `icons` trong data.js. 434/434 ảnh, ~1,55 MB base64.
 - `test1.js`, `test2.js` — kiểm thử Playwright (mở, sửa, mod nhanh, hoàn tác, nhân bản, tải file, chuyển RA2).
 - `test_layout.js` — đo bố cục ở 9 cỡ màn hình (2560 → 390 px): số ô mỗi hàng, cuộn ngang, nút Lưu có hiện không. Chạy: `node test_layout.js ../../RA2_Mod_Editor.html`.
 - `test_sharp.js` — kiểm thử phần **Độ nét hình** (giả lập màn 1920×1080): nút Hình nét nhất, xBRZ tự chuyển OpenGL, chỉ sửa `[ddraw]`, `[game]`, `[gamemd]`.

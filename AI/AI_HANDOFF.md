@@ -113,3 +113,11 @@ _Cập nhật: 2026-11-02 (Asia/Ho_Chi_Minh) · Agent: Claude (Cowork, cloud ses
 - Kiểm chứng (Playwright, OPFS, màn giả lập 1920×1080): Hình nét nhất → ddraw.ini đổi maintas (3 mục), shader, d3d9linear; RA2MD.INI/RA2.INI → 1920×1080; mở lại nhận đúng trạng thái; xBRZ → renderer=opengl; test_perf, test2 vẫn qua, không lỗi console.
 - CHƯA kiểm chứng trong game thật: độ nét thực tế, xBRZ/Lanczos trên GPU, RA2 gốc có nhận 1920×1080 trở lên không.
 
+## 2026-11-02 13:45 — Ảnh cameo trong Mod Editor nét hơn
+- Người dùng làm rõ: “lính, nhà… đang mờ” là ảnh trong Mod Editor (không phải trong game; phần độ nét trong game vẫn giữ).
+- Nguyên nhân: ảnh lưu JPEG nén (~1,9 KB/ảnh), danh sách thu nhỏ 60×48→48×38, chi tiết phóng ×2,4 (144×115) bằng nội suy mượt.
+- Sửa: trích lại 434 cameo từ language.mix/langmd.mix/ecache03/04/5.mix (`cameo.pal` trong ra2.mix/cache.mix) → PNG 8-bit, màu 0 trong suốt; danh sách 60×48 (×1), chi tiết 180×144 (×3), điện thoại 120×96 (×2); `image-rendering: pixelated`, `object-fit: contain`. Chỉ khóa `icons` trong data.js đổi (đã so sánh yr/ra2 giữ nguyên). File HTML 1,85 → 2,31 MB.
+- Script: `AI/tools/src/mod-editor/cameo/extract.py`, `build_png.py`.
+- Kiểm chứng: Playwright 1440 (DPR 1), 1536 (DPR 1,25), 390 (DPR 3): ảnh 60×48 gốc, hiển thị 180×144/120×96 pixelated; test2, test_perf, test_sharp, test_layout qua, không lỗi console.
+- Chưa làm: ảnh trong sổ tay PDF vẫn phóng bằng Lanczos (người dùng chưa yêu cầu).
+

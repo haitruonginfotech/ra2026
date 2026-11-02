@@ -102,6 +102,7 @@ Xem [`AI/tools/src/README.md`](AI/tools/src/README.md): mingw-w64 cho DLL/EXE, P
 ## 7. Lịch sử thay đổi
 
 ### 2026-11-02
+- 🖼️ **Ảnh quân & công trình trong Mod Editor nét hơn**: trích lại 434 ảnh cameo gốc (60×48) từ file game thành PNG 8-bit không mất dữ liệu (trước là JPEG nén), hiển thị đúng cỡ trong danh sách và phóng đúng ×3 (×2 trên điện thoại) với `image-rendering: pixelated`, nền trong suốt.
 - 🔎 **Làm nét hình trong game**: hình mờ do cnc-ddraw phóng to bằng bilinear (`d3d9linear=true`, `shader=bilinear.glsl`) và kéo méo (`maintas=false`). Hộp Hiệu năng thêm phần **Độ nét hình** (nearest / xBRZ / Lanczos, giữ tỉ lệ, phóng số nguyên) và nút **Hình nét nhất** (độ phân giải bằng màn hình).
 - 🪟 Hướng dẫn **Windows 11** (SmartScreen, Smart App Control, Defender, bộ vẽ hình); thử lại trên Wine giả lập Windows 11.
 - 🖥️ Mod Editor hợp màn hình hơn: màn 1024–1439 px thanh nút xuống 2 dòng (trước đó nút **Lưu vào game** bị đẩy ra ngoài ở 1024 px); màn 1920+ hiện 6–7 ô mỗi hàng.

@@ -58,10 +58,11 @@ aside{background:var(--panel);border-right:1px solid var(--line);display:flex;fl
 .cats button[aria-pressed=true]{background:#E1E7EC;color:var(--ink);font-weight:600}
 .opts{padding:6px 12px;font-size:12.5px;color:var(--muted);border-bottom:1px solid var(--line2)}
 .list{overflow:auto;flex:1;padding:4px 0}
-.row{display:grid;grid-template-columns:48px 1fr auto;gap:10px;align-items:center;padding:5px 12px;cursor:pointer;border-left:3px solid transparent}
+.row{display:grid;grid-template-columns:60px 1fr auto;gap:10px;align-items:center;padding:5px 12px;cursor:pointer;border-left:3px solid transparent}
 .row:hover{background:#EEF2F5}
 .row[aria-selected=true]{background:#E1E7EC;border-left-color:var(--ink)}
-.row img,.row .noimg{width:48px;height:38px;border-radius:3px;object-fit:cover;display:block}
+/* cameo gốc 60×48: hiển thị đúng cỡ hoặc phóng số nguyên, giữ nguyên điểm ảnh cho nét */
+.row img,.row .noimg{width:60px;height:48px;border-radius:3px;object-fit:contain;display:block;image-rendering:pixelated}
 .noimg{background:repeating-linear-gradient(45deg,#E1E7EC 0 6px,#EEF2F5 6px 12px);border:1px solid var(--line2)}
 .row .t{min-width:0}
 .row .n{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -77,8 +78,8 @@ main{overflow:auto;min-width:0}
 .empty h2{font-family:var(--head);color:var(--ink);font-size:24px;margin:0 0 8px}
 
 /* dossier */
-.dossier{display:grid;grid-template-columns:144px 1fr;gap:20px;align-items:start;padding-bottom:16px;border-bottom:2px solid var(--ink);margin-bottom:6px}
-.dossier .cam{width:144px;height:115px;border-radius:4px;object-fit:cover;display:block;box-shadow:0 0 0 1px #0002}
+.dossier{display:grid;grid-template-columns:180px 1fr;gap:20px;align-items:start;padding-bottom:16px;border-bottom:2px solid var(--ink);margin-bottom:6px}
+.dossier .cam{width:180px;height:144px;border-radius:4px;object-fit:contain;display:block;box-shadow:0 0 0 1px #0002;image-rendering:pixelated}
 .dossier .cam.noimg{border-radius:4px}
 .dossier h1{font-family:var(--head);font-size:32px;line-height:1.05;margin:0;font-weight:700;font-stretch:semi-condensed}
 .meta{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;margin:6px 0 10px;color:var(--muted);font-size:13px}
@@ -181,7 +182,7 @@ dialog::backdrop{background:#17212B99}
   aside{max-height:55vh}
   .bar{flex-wrap:wrap;height:auto;padding:10px 12px}
   .src{flex-basis:100%;order:5}
-  .dossier{grid-template-columns:96px 1fr}.dossier .cam{width:96px;height:77px}
+  .dossier{grid-template-columns:120px 1fr}.dossier .cam{width:120px;height:96px}
   .bars{grid-template-columns:repeat(2,1fr)}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
@@ -424,7 +425,7 @@ function icon(name){
   name = name.toLowerCase();
   if (iconCache[name] !== undefined) return iconCache[name];
   const b = D.icons[name];
-  return iconCache[name] = b ? 'data:image/jpeg;base64,' + b : null;
+  return iconCache[name] = b ? 'data:image/png;base64,' + b : null;
 }
 
 async function loadGame(g, text, label, sourceKind){
