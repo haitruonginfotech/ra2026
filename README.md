@@ -85,10 +85,11 @@ Dự án dùng được trên Windows 10 và 11 (64-bit, cả máy ARM). `BINKW3
 Engine RA2/YR chạy logic game trên **một luồng**, nên trận càng đông quân thì càng dễ giật, máy nhiều nhân cũng không đỡ. Trong Mod Editor, bấm **Hiệu năng**:
 
 - **Hiển thị** (`ddraw.ini`, dùng chung 2 game): bộ vẽ Direct3D 9, giới hạn 60 FPS, V-Sync, cho phần vẽ hình chạy trên nhân CPU khác (`singlecpu=false`), chế độ màn hình.
-- **Thiết lập trong game** (`RA2MD.INI` / `RA2.INI`): độ phân giải, mức chi tiết. Thoát game trước khi áp dụng.
+- **Độ nét hình** (`ddraw.ini`): kiểu phóng hình (bilinear mờ → nearest sắc nét, hoặc xBRZ/Lanczos qua OpenGL), giữ đúng tỉ lệ khung hình, phóng to theo số nguyên.
+- **Thiết lập trong game** (`RA2MD.INI` / `RA2.INI`): độ phân giải (editor tự nhận độ phân giải màn hình), mức chi tiết. Thoát game trước khi áp dụng.
 - **Luật chơi**: giảm hoặc tắt mảnh vỡ khi nổ, cho game tự tắt hiệu ứng sớm hơn khi tụt FPS, bỏ khói lửa trên công trình hư hại.
 
-Nút **Đề xuất cho trận đông quân** điền sẵn cấu hình khuyên dùng. Bấm **Áp dụng**: file cấu hình được ghi thẳng vào thư mục game (bản cũ sao lưu vào `mod_backups\`), phần luật chơi chuyển sang bước **Lưu vào game** và hoàn tác được bằng `Ctrl+Z`. Nếu game bị treo hay văng sau khi bật “Dùng nhiều nhân CPU”, chọn lại “Không”.
+Nút **Đề xuất cho trận đông quân** điền sẵn cấu hình khuyên dùng. Nút **Hình nét nhất** đặt độ phân giải game bằng màn hình (không phải phóng to) + nearest + giữ tỉ lệ; nét nhất nhưng thấy rộng hơn, quân nhỏ hơn và nặng hơn. Muốn vừa nét vừa nhẹ: giữ độ phân giải thấp, chọn kiểu **xBRZ**. Bấm **Áp dụng**: file cấu hình được ghi thẳng vào thư mục game (bản cũ sao lưu vào `mod_backups\`), phần luật chơi chuyển sang bước **Lưu vào game** và hoàn tác được bằng `Ctrl+Z`. Nếu game bị treo hay văng sau khi bật “Dùng nhiều nhân CPU”, chọn lại “Không”.
 
 > **Lưu ý:** bản repack đã có sẵn mod. RA2 dùng `rules.ini` rời; Yuri's Revenge dùng `expandmd03.mix` (xây nhanh ~3 lần, bán hoàn 100%, thêm 51 quân, bỏ Harrier). Sổ tay PDF mô tả **luật chính thức**.
 
@@ -101,6 +102,7 @@ Xem [`AI/tools/src/README.md`](AI/tools/src/README.md): mingw-w64 cho DLL/EXE, P
 ## 7. Lịch sử thay đổi
 
 ### 2026-11-02
+- 🔎 **Làm nét hình trong game**: hình mờ do cnc-ddraw phóng to bằng bilinear (`d3d9linear=true`, `shader=bilinear.glsl`) và kéo méo (`maintas=false`). Hộp Hiệu năng thêm phần **Độ nét hình** (nearest / xBRZ / Lanczos, giữ tỉ lệ, phóng số nguyên) và nút **Hình nét nhất** (độ phân giải bằng màn hình).
 - 🪟 Hướng dẫn **Windows 11** (SmartScreen, Smart App Control, Defender, bộ vẽ hình); thử lại trên Wine giả lập Windows 11.
 - 🖥️ Mod Editor hợp màn hình hơn: màn 1024–1439 px thanh nút xuống 2 dòng (trước đó nút **Lưu vào game** bị đẩy ra ngoài ở 1024 px); màn 1920+ hiện 6–7 ô mỗi hàng.
 - ⚡ **Mod Editor → Hiệu năng**: chỉnh `ddraw.ini` (bộ vẽ, FPS, V-Sync, nhiều nhân CPU, chế độ màn hình), độ phân giải và mức chi tiết trong `RA2MD.INI`/`RA2.INI`, giảm mảnh vỡ/hiệu ứng trong luật chơi; ghi thẳng vào file, có sao lưu. Kèm nút cấu hình đề xuất cho trận đông quân.

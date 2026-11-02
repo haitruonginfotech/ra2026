@@ -106,3 +106,10 @@ _Cập nhật: 2026-11-02 (Asia/Ho_Chi_Minh) · Agent: Claude (Cowork, cloud ses
   - README VI/EN: mục “Windows 11”; editor: gợi ý đổi bộ vẽ khi màn đen.
 - CHƯA kiểm chứng: chạy trên Windows 11 thật.
 
+## 2026-11-02 13:20 — Làm nét hình trong game
+- Người dùng: hình nhà, lính không nét. Nguyên nhân (ddraw.ini): `d3d9linear=true` + `shader=Shaders\interpolation\bilinear.glsl` (phóng to bilinear), `maintas=false` ở `[ddraw]`/`[game]`/`[gamemd]` (kéo giãn méo), game chạy 1440×900 (YR) / 1360×768 (RA2) rồi phóng lên màn hình. Thư mục `Shaders\` có nearest-neighbor, xbrz-freescale, lanczos2-sharp, fast-sharpen, cubic, crt.
+- Hộp Hiệu năng → “Hiệu năng & độ nét”: phần **Độ nét hình** (`pf-scale`: soft/pixel/xbrz/lanczos → d3d9linear + shader; xBRZ/Lanczos tự đặt renderer=opengl; `pf-maintas`, `pf-boxing`); độ phân giải có thêm độ phân giải màn hình (`screen.width × devicePixelRatio`); nút **Hình nét nhất** = độ phân giải màn hình + nearest + maintas=true.
+- Logic ghi ddraw.ini thống nhất: so với giá trị có hiệu lực của `[game]` và `[gamemd]`; ghi `[ddraw]` và mục riêng nào đang khai báo khóa đó.
+- Kiểm chứng (Playwright, OPFS, màn giả lập 1920×1080): Hình nét nhất → ddraw.ini đổi maintas (3 mục), shader, d3d9linear; RA2MD.INI/RA2.INI → 1920×1080; mở lại nhận đúng trạng thái; xBRZ → renderer=opengl; test_perf, test2 vẫn qua, không lỗi console.
+- CHƯA kiểm chứng trong game thật: độ nét thực tế, xBRZ/Lanczos trên GPU, RA2 gốc có nhận 1920×1080 trở lên không.
+

@@ -198,7 +198,7 @@ dialog::backdrop{background:#17212B99}
   <div class="acts">
   <button class="btn" id="b-folder">Mở thư mục game</button>
   <button class="btn" id="b-quick">Mod nhanh</button>
-  <button class="btn" id="b-perf" title="Giảm giật khi đông quân">Hiệu năng</button>
+  <button class="btn" id="b-perf" title="Giảm giật khi đông quân, làm nét hình">Hiệu năng</button>
   <button class="btn" id="b-undo" title="Hoàn tác (Ctrl+Z)" disabled>Hoàn tác</button>
   <button class="btn" id="b-changes">Thay đổi<span class="count" id="nchg">0</span></button>
   <button class="btn" id="b-restore">Khôi phục…</button>
@@ -1039,9 +1039,22 @@ const DD_GAME_KEYS = ['renderer','maxfps','vsync'];
 const INI_FILE = {yr:'RA2MD.INI', ra2:'RA2.INI'};
 const RESOLUTIONS = ['1024x768','1280x720','1280x800','1280x1024','1360x768','1366x768','1440x900','1600x900','1680x1050','1920x1080'];
 const MODES = {borderless:['true','true'], window:['false','true'], full:['true','false']};
+// kiểu phóng hình: d3d9 dùng d3d9linear; OpenGL dùng shader
+const SCALES = {
+  soft:   {label:'Mềm – bilinear (hơi mờ)', d3d9linear:'true', shader:'Shaders\\interpolation\\bilinear.glsl'},
+  pixel:  {label:'Sắc nét từng điểm ảnh – nearest', d3d9linear:'false', shader:'Shaders\\nearest-neighbor.glsl'},
+  xbrz:   {label:'Nét, viền mịn – xBRZ (OpenGL)', gl:true, shader:'Shaders\\xbrz\\xbrz-freescale.glsl'},
+  lanczos:{label:'Nét vừa – Lanczos2 sharp (OpenGL)', gl:true, shader:'Shaders\\windowed\\lanczos2-sharp.glsl'},
+};
+function scaleNow(dd){
+  const r = (ddGet(dd, 'renderer') || '').toLowerCase(), sh = (ddGet(dd, 'shader') || '').toLowerCase().replace(/\//g, '\\');
+  if (r === 'opengl'){ const k = Object.keys(SCALES).find(k => SCALES[k].shader.toLowerCase() === sh); if (k) return k; return /nearest/.test(sh) ? 'pixel' : 'soft'; }
+  return (ddGet(dd, 'd3d9linear') || 'true').toLowerCase() === 'false' ? 'pixel' : 'soft';
+}
+function nativeRes(){ const d = window.devicePixelRatio || 1; return `${Math.round(screen.width * d)}x${Math.round(screen.height * d)}`; }
 let PF = null;
 async function readIni(name){ const t = dir ? await fileText(name) : null; return t === null ? null : new Ini(t); }
-function ddGet(ini, key){ for (const s of DD_GAME_KEYS.includes(key) ? ['gamemd','ddraw'] : ['ddraw']){ const v = ini.get(s, key); if (v !== undefined) return v; } }
+function ddGet(ini, key){ for (const s of ['gamemd','ddraw']){ const v = ini.get(s, key); if (v !== undefined) return v; } }
 function selHTML(id, opts, v){
   const lv = String(v ?? '').toLowerCase(), known = opts.some(o => String(o[0]).toLowerCase() === lv);
   return `<select id="${id}">${opts.map(([k, l]) => `<option value="${esc(k)}" ${String(k).toLowerCase() === lv ? 'selected' : ''}>${esc(l)}</option>`).join('')}${v !== undefined && v !== '' && !known ? `<option value="${esc(v)}" selected>${esc(v)} (đang dùng)</option>` : ''}</select>`;
@@ -1067,11 +1080,18 @@ async function openPerf(){
       ${prow('V-Sync', 'Bật để hết xé hình, nhưng chuột/lệnh có thể trễ một chút.', selHTML('pf-vsync', [['false','Tắt'],['true','Bật']], ddGet(dd, 'vsync')))}
       ${prow('Dùng nhiều nhân CPU', 'Game vẫn chạy 1 luồng, nhưng phần vẽ hình của cnc-ddraw là luồng riêng: cho nó chạy nhân khác sẽ đỡ tranh CPU. Nếu game bị treo hay văng, chọn lại “Không”.', selHTML('pf-singlecpu', [['true','Không (ép 1 nhân, mặc định)'],['false','Có (nên thử khi đông quân)']], ddGet(dd, 'singlecpu')))}
       ${prow('Chế độ màn hình', '', selHTML('pf-mode', [['borderless','Toàn màn hình không viền'],['window','Cửa sổ'],['full','Toàn màn hình độc quyền']], mode))}
+    </div>
+    <div class="ph">Độ nét hình<small>khi hình game được phóng to cho vừa màn hình</small></div>
+    <div class="qgrid pg">
+      ${prow('Kiểu phóng hình', 'Bilinear làm mờ nhà, lính. Nearest giữ nguyên điểm ảnh (nét nhất, có thể hơi răng cưa). xBRZ/Lanczos cần OpenGL: nét mà viền mịn.', selHTML('pf-scale', Object.entries(SCALES).map(([k, s]) => [k, s.label]), scaleNow(dd)))}
+      ${prow('Giữ đúng tỉ lệ khung hình', 'Không kéo méo hình khi tỉ lệ game khác màn hình (vd 16:10 trên màn 16:9); có viền đen hai bên.', selHTML('pf-maintas', [['true','Có'],['false','Không (kéo giãn đầy màn hình)']], ddGet(dd, 'maintas')))}
+      ${prow('Phóng to theo số nguyên', 'Chỉ phóng ×1, ×2, ×3… nên điểm ảnh đều tuyệt đối; phần thừa thành khung đen.', selHTML('pf-boxing', [['false','Không'],['true','Có']], ddGet(dd, 'boxing')))}
     </div>`;
     const gameRows = ['yr','ra2'].filter(g => PF.ini[g]).map(g => {
       const f = PF.ini[g], gn = g === 'yr' ? 'YR' : 'RA2';
       const w = f.get('Video', 'ScreenWidth'), h = f.get('Video', 'ScreenHeight');
-      return prow(`Độ phân giải ${gn}`, 'Nhỏ hơn = ít ô bản đồ phải vẽ hơn, nhẹ hơn. cnc-ddraw vẫn phóng to cho vừa màn hình.', selHTML('pf-res-' + g, RESOLUTIONS.map(r => [r, r.replace('x', ' × ')]), w && h ? `${w}x${h}` : undefined))
+      const nat = nativeRes(), opts = [...new Set([...RESOLUTIONS, nat])].sort((a, b) => parseInt(a) - parseInt(b) || parseInt(a.split('x')[1]) - parseInt(b.split('x')[1]));
+      return prow(`Độ phân giải ${gn}`, `Bằng độ phân giải màn hình (${nat.replace('x', ' × ')}) thì nét nhất vì không phải phóng to, nhưng thấy rộng hơn, quân nhỏ hơn và nặng hơn. Nhỏ hơn thì nhẹ hơn nhưng phải phóng to.`, selHTML('pf-res-' + g, opts.map(r => [r, r.replace('x', ' × ') + (r === nat ? ' (màn hình của bạn)' : '')]), w && h ? `${w}x${h}` : undefined))
         + prow(`Mức chi tiết ${gn}`, 'Thấp bớt các hiệu ứng phụ (khói, bóng, ánh sáng).', selHTML('pf-det-' + g, [['0','Thấp'],['1','Vừa'],['2','Cao']], f.get('Options', 'DetailLevel')));
     }).join('');
     if (gameRows) disp += `<div class="ph">Thiết lập trong game<small>${['yr','ra2'].filter(g => PF.ini[g]).map(g => INI_FILE[g]).join(', ')}</small></div><div class="qgrid pg">${gameRows}</div>
@@ -1079,9 +1099,9 @@ async function openPerf(){
   }
   const detNow = ini.get('AudioVisual', 'DetailMinFrameRateNormal');
   const dmgN = ini.order.filter(k => (ini.get(ini.secs.get(k).name, 'DamageParticleSystems') || '').trim()).length;
-  dlg.innerHTML = `<div class="dh"><h2>Hiệu năng</h2><p>Giảm giật khi đông quân. Chọn ở đây rồi bấm <b>Áp dụng</b>: cấu hình được ghi thẳng vào file trong thư mục game, bản cũ sao lưu vào mod_backups.</p></div>
+  dlg.innerHTML = `<div class="dh"><h2>Hiệu năng & độ nét</h2><p>Giảm giật khi đông quân, làm nét hình. Chọn ở đây rồi bấm <b>Áp dụng</b>: cấu hình được ghi thẳng vào file trong thư mục game, bản cũ sao lưu vào mod_backups.</p></div>
    <div class="db">
-    <div class="presets"><button id="pf-reco">Đề xuất cho trận đông quân</button></div>
+    <div class="presets"><button id="pf-reco">Đề xuất cho trận đông quân</button><button id="pf-sharp">Hình nét nhất</button></div>
     <div class="ph" style="border-top:0;padding-top:0;margin-top:4px">Hiển thị<small>ddraw.ini, dùng chung 2 game</small></div>${disp}
     <div class="ph">Luật chơi<small>${gname} · ${esc(cur().label)}</small></div>
     <div class="qgrid pg">
@@ -1099,10 +1119,21 @@ async function openPerf(){
   $('#pf-folder', dlg)?.addEventListener('click', async () => { if (await pickFolder()){ updateSrc(); dlg.close(); openPerf(); } });
   $('#pf-reco').onclick = () => {
     const setv = (id, v) => { const el = $('#' + id); if (el) el.value = v; };
-    setv('pf-renderer', 'direct3d9'); setv('pf-maxfps', '60'); setv('pf-vsync', 'false'); setv('pf-singlecpu', 'false');
+    setv('pf-renderer', SCALES[$('#pf-scale')?.value]?.gl ? 'opengl' : 'direct3d9'); setv('pf-maxfps', '60'); setv('pf-vsync', 'false'); setv('pf-singlecpu', 'false');
     setv('pf-debris', 'reduce'); setv('pf-detfps', '30');
     upd(); toast('Đã điền cấu hình đề xuất. Xem lại rồi bấm Áp dụng.');
   };
+  $('#pf-sharp').onclick = () => {
+    if (!$('#pf-scale')){ toast('Mở thư mục Ra2026 trước để chỉnh độ nét.', true); return; }
+    const nat = nativeRes();
+    ['yr','ra2'].forEach(g => { const s = $('#pf-res-' + g); if (s) s.value = nat; });
+    $('#pf-scale').value = 'pixel'; $('#pf-maintas').value = 'true';
+    if ($('#pf-renderer').value === 'gdi') $('#pf-renderer').value = 'direct3d9';
+    upd(); toast(`Đã chọn độ phân giải ${nat.replace('x', ' × ')} (bằng màn hình) và phóng hình kiểu nearest. Xem lại rồi bấm Áp dụng.`);
+  };
+  // shader chỉ chạy với OpenGL
+  $('#pf-scale')?.addEventListener('change', () => { if (SCALES[$('#pf-scale').value].gl) $('#pf-renderer').value = 'opengl'; upd(); });
+  $('#pf-renderer')?.addEventListener('change', () => { if ($('#pf-renderer').value !== 'opengl' && SCALES[$('#pf-scale').value].gl) $('#pf-scale').value = 'pixel'; upd(); });
   $('#pf-cancel').onclick = () => dlg.close();
   $('#pf-go').onclick = async () => {
     const plan = perfPlan();
@@ -1124,13 +1155,17 @@ function perfPlan(){
   if (PF && PF.dd){
     const c = new Ini(PF.dd.text()), ch = new Set();
     const put = (s, k, val) => { if (val === undefined || (c.get(s, k) ?? '').toLowerCase() === val.toLowerCase()) return; c.set(s, k, val); ch.add(k); };
-    // chỉ ghi khi khác giá trị đang có hiệu lực của RA2 ([game]) hoặc YR ([gamemd])
+    // [game] (RA2) và [gamemd] (YR) ghi đè [ddraw]: chỉ ghi khi khác giá trị đang có hiệu lực,
+    // ghi vào [ddraw] và vào mục riêng nào đang tự khai báo khóa đó
     const eff = (s, k) => (c.get(s, k) ?? c.get('ddraw', k) ?? '').toLowerCase();
-    DD_GAME_KEYS.forEach(k => { const val = v('pf-' + k); if (val === undefined) return;
+    const setk = (k, val) => { if (val === undefined) return;
       if (['game','gamemd'].every(s => eff(s, k) === val.toLowerCase())) return;
-      put('ddraw', k, val); ['game','gamemd'].forEach(s => c.has(s) && put(s, k, val)); });
-    put('ddraw', 'singlecpu', v('pf-singlecpu'));
-    const m = MODES[v('pf-mode')]; if (m){ put('ddraw', 'fullscreen', m[0]); put('ddraw', 'windowed', m[1]); }
+      put('ddraw', k, val); ['game','gamemd'].forEach(s => c.get(s, k) !== undefined && put(s, k, val)); };
+    const sc = SCALES[v('pf-scale')];
+    setk('renderer', sc && sc.gl ? 'opengl' : v('pf-renderer'));
+    ['maxfps','vsync','singlecpu','maintas','boxing'].forEach(k => setk(k, v('pf-' + k)));
+    if (sc){ setk('shader', sc.shader); if (sc.d3d9linear) setk('d3d9linear', sc.d3d9linear); }
+    const m = MODES[v('pf-mode')]; if (m){ setk('fullscreen', m[0]); setk('windowed', m[1]); }
     if (ch.size){ plan.files['ddraw.ini'] = {ini:c}; plan.keys['ddraw.ini'] = [...ch]; }
   }
   for (const g of ['yr','ra2']){

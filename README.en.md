@@ -85,10 +85,11 @@ The project works on Windows 10 and 11 (64-bit, ARM PCs included). `BINKW32.DLL`
 The RA2/YR engine runs the game logic on **a single thread**, so large battles stutter no matter how many CPU cores you have. In the Mod Editor, click **Hiệu năng** (Performance):
 
 - **Display** (`ddraw.ini`, shared by both games): Direct3D 9 renderer, 60 FPS cap, V-Sync, let the renderer run on another CPU core (`singlecpu=false`), screen mode.
-- **In-game settings** (`RA2MD.INI` / `RA2.INI`): resolution, detail level. Quit the game before applying.
+- **Sharpness** (`ddraw.ini`): scaling filter (blurry bilinear → crisp nearest, or xBRZ/Lanczos via OpenGL), keep aspect ratio, integer scaling.
+- **In-game settings** (`RA2MD.INI` / `RA2.INI`): resolution (the editor detects your screen resolution), detail level. Quit the game before applying.
 - **Rules**: reduce or remove explosion debris, let the game drop effects sooner when FPS falls, remove smoke/fire on damaged buildings.
 
-**Đề xuất cho trận đông quân** (Recommended for big battles) fills in suggested values. **Áp dụng** (Apply) writes the config files straight into the game folder (old copies go to `mod_backups\`); rule changes go through **Lưu vào game** (Save to game) and can be undone with `Ctrl+Z`. If the game hangs or crashes with multiple CPU cores enabled, switch it back to “Không” (No).
+**Đề xuất cho trận đông quân** (Recommended for big battles) fills in suggested values. **Hình nét nhất** (Sharpest image) sets the game resolution to your screen's (no upscaling) + nearest + keep aspect ratio; sharpest, but you see more of the map, units look smaller and it is heavier. For sharp and light: keep a lower resolution and pick **xBRZ**. **Áp dụng** (Apply) writes the config files straight into the game folder (old copies go to `mod_backups\`); rule changes go through **Lưu vào game** (Save to game) and can be undone with `Ctrl+Z`. If the game hangs or crashes with multiple CPU cores enabled, switch it back to “Không” (No).
 
 > **Note:** the repack ships with mods. RA2 uses a loose `rules.ini`; Yuri's Revenge uses `expandmd03.mix` (about 3× faster building, 100% sell refund, 51 new units, Harrier removed). The PDF handbook describes the **official** rules.
 
@@ -101,6 +102,7 @@ See [`AI/tools/src/README.md`](AI/tools/src/README.md): mingw-w64 for the DLL/EX
 ## 7. Changelog
 
 ### 2026-11-02
+- 🔎 **Sharper in-game image**: the blur came from cnc-ddraw upscaling with bilinear filtering (`d3d9linear=true`, `shader=bilinear.glsl`) and stretching (`maintas=false`). The Performance dialog gains a **Sharpness** section (nearest / xBRZ / Lanczos, keep aspect, integer scaling) and a **Hình nét nhất** (Sharpest image) button (screen-native resolution).
 - 🪟 **Windows 11** notes (SmartScreen, Smart App Control, Defender, renderer); re-tested under Wine reporting Windows 11.
 - 🖥️ Mod Editor fits more screens: at 1024–1439 px the button bar wraps to 2 rows (before, **Lưu vào game** was pushed off-screen at 1024 px); 1920+ px shows 6–7 fields per row.
 - ⚡ **Mod Editor → Performance**: edit `ddraw.ini` (renderer, FPS cap, V-Sync, multi-core, screen mode), resolution and detail level in `RA2MD.INI`/`RA2.INI`, and cut debris/effects in the rules; written straight to the files with backups. Includes a recommended preset for big battles.
