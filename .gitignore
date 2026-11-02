@@ -1,37 +1,33 @@
 # =====================================================================
-# Ra2026 — .gitignore (gốc repo: E:\games\Ra2)
-# Chiến lược: CHỈ đưa lên git phần mình làm (AI\, file tích hợp trong
-# Ra2026, README). Mọi file game gốc, file cài đặt, save, cache, bản
-# sao lưu và dữ liệu chạy máy (local) đều bị bỏ qua.
+# Ra2026 — .gitignore (gốc repo = thư mục game E:\games\Ra2\Ra2026)
+# Chỉ đưa lên git phần dự án tạo ra. Toàn bộ file game của EA (exe, mix,
+# csf, ini, bản đồ, save...) chỉ nằm trên máy, KHÔNG lên git.
 # =====================================================================
 
-# --- 1. Bỏ toàn bộ thư mục gốc, rồi cho phép lại từng mục cần theo dõi ---
+# --- 1. Bỏ mọi thứ ở gốc, rồi cho phép lại đúng các mục của dự án ---
 /*
 !/.gitignore
-!/README.txt
-!/README.en.txt
+!/README.md
+!/README.en.md
 !/AI/
-!/Ra2026/
+!/BINKW32.DLL
+!/Play_RA2.exe
+!/Play_YR.exe
 
-# --- 2. Ra2026: chỉ giữ file tích hợp do dự án tạo ra ---
-# (game.exe, *.mix, *.sav, binkw32_o.dll của RAD... là dữ liệu game có bản quyền, không đưa lên)
-/Ra2026/*
-!/Ra2026/BINKW32.DLL
-!/Ra2026/Play_RA2.exe
-!/Ra2026/Play_YR.exe
+# --- 2. Dữ liệu sinh ra khi chạy / chỉnh mod (chỉ ở máy) ---
+#   portable/    registry ảo + log chặn ghi của BINKW32.DLL
+#   mod_backups/ bản sao lưu của RA2 Mod Editor
+#   rulesmd.ini / rules.ini rời do Mod Editor lưu → đã bị mục 1 bỏ qua
+/portable/
+/mod_backups/
 
-# Dữ liệu sinh ra khi chạy (registry ảo, log chặn, bản sao lưu của Mod Editor)
-/Ra2026/portable/
-/Ra2026/mod_backups/
-
-# --- 3. Bằng chứng bảo mật gốc: giữ local (theo chính sách, chỉ đưa bản đã che) ---
+# --- 3. Bằng chứng bảo mật gốc: giữ trên máy ---
 /AI/security/*/evidence/
 
-# --- 4. Rác hệ điều hành / editor / công cụ build ---
+# --- 4. Rác hệ điều hành / editor / build ---
 Thumbs.db
 ehthumbs.db
 desktop.ini
-$RECYCLE.BIN/
 .DS_Store
 ~$*
 *.tmp
@@ -47,7 +43,4 @@ venv/
 node_modules/
 *.pkl
 
-# --- Ghi chú ---
-# Đã bỏ qua nhờ mục 1: 2.Red_alert_2_setup.rar, SETUP_RA2\, Yuris-Revenge\,
-# ra2-yuris-revenge[taira2.org]\, aaa\ (thư mục clone tạm) và mọi thứ khác ở gốc.
-# Muốn thêm một file/thư mục mới ở gốc vào git: thêm dòng  !/ten-moi  vào mục 1.
+# Muốn đưa thêm một file ở gốc lên git: thêm dòng  !/ten-file  vào mục 1.
