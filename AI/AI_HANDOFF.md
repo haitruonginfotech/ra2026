@@ -3,7 +3,7 @@
 _Cập nhật: 2026-11-02 (Asia/Ho_Chi_Minh) · Agent: Claude (Cowork, cloud session + device bridge tới máy haitruong-it)_
 
 ## Dự án
-- **PROJECT_ROOT:** `E:\games\Ra2` (thư mục người dùng chọn). Dự kiến làm gốc git của `https://github.com/haitruonginfotech/ra2026` (repo đang được clone tạm ở `aaa\ra2026`, nhánh main, commit cuối "clean src" 1811d66). Chưa có `.git` ở gốc.
+- **PROJECT_ROOT / gốc git:** `E:\games\Ra2\Ra2026` (đổi ngày 02/11 theo yêu cầu người dùng; trước đó là `E:\games\Ra2`). Remote: `https://github.com/haitruonginfotech/ra2026` (main). Mọi đường dẫn `AI/...` dưới đây là tương đối với Ra2026.
 - **Nội dung:** Red Alert 2 + Yuri's Revenge (bản repack taira2.org) → bản chơi portable `Ra2026`, sổ tay, công cụ mod.
 - **Chế độ:** DESKTOP_DIRECT. Ghi trực tiếp vào thư mục đã kết nối, đã được người dùng cho phép. Chính sách `D:\AI\.claude\CLAUDE.md` v5.7 đã đọc ngày 02/11 (trước đó chưa truy cập được: `GLOBAL_INSTRUCTIONS_UNAVAILABLE`, `LOCAL_SKILLS_UNAVAILABLE`).
 
@@ -69,3 +69,11 @@ _Cập nhật: 2026-11-02 (Asia/Ho_Chi_Minh) · Agent: Claude (Cowork, cloud ses
 - Kiểm chứng: clone lại repo → đúng 28 file, **trùng từng byte** với bản trên máy (cmp).
 - Máy local `E:\games\Ra2` **chưa có `.git`**; muốn đồng bộ: `git init -b main` → `git remote add origin https://github.com/haitruonginfotech/ra2026.git` → `git fetch origin` → `git reset origin/main` (giữ nguyên file). Sau đó có thể xóa `aaa\`.
 - Chưa làm: release/tag, README.md, social preview.
+
+## 2026-11-02 — Đổi gốc repo thành Ra2026
+- Người dùng yêu cầu đưa `E:\games\Ra2\Ra2026` lên repo. **Từ chối đưa file game** (bộ game EA có bản quyền, exe đã crack; `ra2.mix` 282 MB vượt giới hạn 100 MB của GitHub). Thay bằng: gốc repo = Ra2026, chỉ file dự án.
+- Trên máy: chuyển `E:\games\Ra2\AI` → `Ra2026\AI`; `.gitignore` → `Ra2026\.gitignore` (viết lại cho gốc mới); README → `README.md` (VI) + `README.en.md` (EN).
+- **Sự cố & khắc phục:** khi chuyển `README.txt` vào Ra2026, nó ghi đè `Readme.txt` gốc của game (Windows không phân biệt hoa/thường) và `.gitignore` cũ của người dùng (nội dung chỉ có `/AI/`). Đã khôi phục `Readme.txt` từ `ra2-yuris-revenge[taira2.org]\Readme.txt`: trùng từng byte (cmp), đúng tên. `.gitignore` cũ được thay bằng bản mới.
+- Repo git cục bộ của người dùng trong Ra2026 (commit `a65885b` "Initial commit - RA2026") **chứa 302 file game**, chưa push → khuyến nghị KHÔNG push; đồng bộ bằng `git fetch origin` + `git reset origin/main`.
+- `E:\games\Ra2\.git` (repo rỗng, chưa commit, do người dùng tạo) giờ không dùng; người dùng có thể xóa.
+- Sổ tay `AI/guide/guide-20261102-vi.pdf` được tạo lại (cùng tài liệu, cùng ngày) với đường dẫn mới `Ra2026\AI\...`.

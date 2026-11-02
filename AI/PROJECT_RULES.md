@@ -1,8 +1,10 @@
-# PROJECT_RULES — E:\games\Ra2
+# PROJECT_RULES — Ra2026 (gốc repo = E:\games\Ra2\Ra2026)
 
-1. **Không sửa thư mục gốc** `ra2-yuris-revenge[taira2.org]`, `SETUP_RA2`, `Yuris-Revenge`, `2.Red_alert_2_setup.rar`: đây là nguồn đối chiếu.
-2. **Ra2026 là bản chơi portable.** Giữ nguyên các file tích hợp: `BINKW32.DLL` (guard), `binkw32_o.dll` (Bink gốc), `Play_RA2.exe`, `Play_YR.exe`. Không đưa lại `Ra2.exe`/`RA2MD.exe`/`YURI.exe`, keygen, RegSetup/SetupReg/uninstal, DRVMGT.DLL, PATCH*, file `.reg`.
-3. Chạy game **chỉ qua Play_*.exe** (game.exe/gamemd.exe tự thoát nếu thiếu mutex).
-4. Luật chơi: file rời `rules.ini` (RA2) / `rulesmd.ini` (YR) trong Ra2026 được ưu tiên hơn .mix. YR hiện dùng mod trong `expandmd03.mix` khi không có `rulesmd.ini` rời. Bản chính thức tham chiếu: `AI\mod\`.
-5. Sửa luật bằng `AI\tools\RA2_Mod_Editor.html` (tự sao lưu vào `Ra2026\mod_backups\`). Chơi LAN: các máy phải dùng cùng file luật.
-6. Tài liệu, công cụ, mã nguồn, báo cáo mới: để trong `AI\` theo `D:\AI\.claude\CLAUDE.md` (v5.7). Cập nhật `AI\AI_HANDOFF.md` sau mỗi lần ghi.
+1. **Gốc repo là thư mục game `Ra2026`.** Chỉ các file của dự án được đưa lên git (xem `.gitignore`): `BINKW32.DLL`, `Play_RA2.exe`, `Play_YR.exe`, `AI/`, `README.md`, `README.en.md`, `.gitignore`. **Không bao giờ** commit file game của EA (exe, mix, csf, ini game, save...). GitHub cũng từ chối file > 100 MB (`ra2.mix`, `ra2md.mix`).
+2. **Không sửa file game gốc** ngoài các thay đổi tích hợp đã ghi trong `AI/AI_HANDOFF.md`. Đặc biệt: không ghi đè `Readme.txt` của game (Windows không phân biệt hoa/thường → README dự án dùng `.md`).
+3. Giữ nguyên file tích hợp: `BINKW32.DLL` (guard), `binkw32_o.dll` (Bink gốc, không lên git), `Play_*.exe`. Không đưa lại `Ra2.exe`/`RA2MD.exe`/`YURI.exe`, keygen, RegSetup/SetupReg/uninstal, `DRVMGT.DLL`, `PATCH*`, file `.reg`.
+4. Chạy game **chỉ qua `Play_*.exe`**.
+5. Luật chơi: `rules.ini` (RA2) / `rulesmd.ini` (YR) rời trong thư mục được ưu tiên hơn `.mix`. Nếu không có `rulesmd.ini` rời, YR dùng luật mod trong `expandmd03.mix`. Bản tham chiếu: `AI/mod/`.
+6. Sửa luật bằng `AI/tools/RA2_Mod_Editor.html` (tự sao lưu vào `mod_backups/`, thư mục này không lên git). Chơi LAN: các máy phải dùng cùng file luật.
+7. Thư mục nguồn đối chiếu ngoài repo (không sửa): `E:\games\Ra2\ra2-yuris-revenge[taira2.org]`, `SETUP_RA2`, `Yuris-Revenge`, `2.Red_alert_2_setup.rar`.
+8. Tài liệu, công cụ, mã nguồn, báo cáo mới để trong `AI/` theo `D:\AI\.claude\CLAUDE.md` (v5.7). Cập nhật `AI/AI_HANDOFF.md` sau mỗi lần ghi.
