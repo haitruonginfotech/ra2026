@@ -16,7 +16,7 @@ _Cập nhật: 2026-11-02 (Asia/Ho_Chi_Minh) · Agent: Claude (Cowork, cloud ses
 | RA2 Mod Editor (02/11) | Xong, đã test bằng Playwright | `AI/tools/RA2_Mod_Editor.html` |
 | Luật tham chiếu | `rulesmd-official-yr.ini` (expandmd01), `rulesmd-mod-expandmd03-yr.ini`, `rules-official-ra2.ini` (local.mix) | `AI/mod/` |
 | Mã nguồn | portable-guard, mod-editor, guide | `AI/tools/src/` (README.md) |
-| Git (02/11) | `.gitignore` + `README.txt` (VI, mặc định) + `README.en.txt` (EN) ở gốc; chưa commit/push | `E:\games\Ra2\` |
+| Git (02/11) | `.gitignore` + `README.txt` (VI) + `README.en.txt` (EN); **đã push 28 file** lên `origin/main` | `E:\games\Ra2\`, github.com/haitruonginfotech/ra2026 |
 
 ## Thay đổi trong Ra2026 (tích hợp trực tiếp, cố ý giữ ngoài AI/)
 - Chép từ `ra2-yuris-revenge[taira2.org]`, **loại**: keygen\, LAN-play-serials\, RegSetup/SetupReg/uninstal(.exe/.ini), DRVMGT.DLL, PATCHGET.DAT, patchgetmd.dat, PATCHW32.DLL, src.7z, aqrit.cfg, Ra2.exe, RA2MD.exe, YURI.exe.
@@ -61,5 +61,11 @@ _Cập nhật: 2026-11-02 (Asia/Ho_Chi_Minh) · Agent: Claude (Cowork, cloud ses
 ## 2026-11-02 — SEO repo GitHub
 - Cập nhật qua Chrome của người dùng (API của phiên bị chặn ghi cài đặt): About của `haitruonginfotech/ra2026` → mô tả EN+VI, giữ website haitruongit.com, 20 topics (red-alert-2, yuris-revenge, command-and-conquer, ra2, ra2yr, westwood, rts, retro-gaming, game-modding, mod-editor, rules-ini, portable-apps, windows, dll-proxy, iat-hooking, virtual-registry, offline-web-app, vietnamese, bao-dong-do-2, game-guide); bỏ tick Packages. Đã xác minh bằng `gh api`.
 - Repo **public**. Người dùng đã được cảnh báo về dữ liệu trích từ game (bản quyền EA) và **chọn: public, đẩy hết**.
-- Phiên cloud không push được (chưa cài Claude GitHub App) → người dùng tự commit/push theo README/hướng dẫn.
+- Phiên cloud không push được bằng git (chưa cài Claude GitHub App) → đã **push qua trang Upload files của GitHub** trong Chrome của người dùng (xem mục dưới).
 - Gợi ý chưa làm: README.md (GitHub hiển thị đẹp, tốt cho SEO), ảnh social preview 1280×640, release/tag v2026.11.02 sau khi push.
+
+## 2026-11-02 — Push lên GitHub
+- Cách làm: GitHub web “Upload files” (Chrome của người dùng, đã đăng nhập), 11 commit theo thư mục, từ `05f77da` (README/.gitignore) đến `ee8f4f9` (portable-guard) + commit cập nhật handoff này.
+- Kiểm chứng: clone lại repo → đúng 28 file, **trùng từng byte** với bản trên máy (cmp).
+- Máy local `E:\games\Ra2` **chưa có `.git`**; muốn đồng bộ: `git init -b main` → `git remote add origin https://github.com/haitruonginfotech/ra2026.git` → `git fetch origin` → `git reset origin/main` (giữ nguyên file). Sau đó có thể xóa `aaa\`.
+- Chưa làm: release/tag, README.md, social preview.
