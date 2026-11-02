@@ -77,3 +77,9 @@ _Cập nhật: 2026-11-02 (Asia/Ho_Chi_Minh) · Agent: Claude (Cowork, cloud ses
 - Repo git cục bộ của người dùng trong Ra2026 (commit `a65885b` "Initial commit - RA2026") **chứa 302 file game**, chưa push → khuyến nghị KHÔNG push; đồng bộ bằng `git fetch origin` + `git reset origin/main`.
 - `E:\games\Ra2\.git` (repo rỗng, chưa commit, do người dùng tạo) giờ không dùng; người dùng có thể xóa.
 - Sổ tay `AI/guide/guide-20261102-vi.pdf` được tạo lại (cùng tài liệu, cùng ngày) với đường dẫn mới `Ra2026\AI\...`.
+
+## 2026-11-02 09:40 — Repo chỉ giữ file đã chỉnh/thêm mới
+- Người dùng đã xóa `E:\games\Ra2\.git` và `aaa\`; yêu cầu git chỉ chứa file đã mod/chỉnh/thêm mới.
+- Đối chiếu từng byte Ra2026 với `ra2-yuris-revenge[taira2.org]`: 296 file giữ nguyên; chỉnh sửa 1 (`BINKW32.DLL`); thêm mới `Play_RA2.exe`, `Play_YR.exe`, `.gitignore`, `README.md`, `README.en.md`, `AI/` (23); đổi tên (không lên git) `binkw32_o.dll`, `cnc-ddraw config.exe.disabled`; đã loại 25 file (keygen, LAN serials, launcher gốc, setup, SafeDisc, patcher, src.7z, aqrit.cfg).
+- GitHub `main` @ `286b1b5`: đúng 28 file trên, README thêm mục “Khác biệt so với bản gốc”. Đã clone lại kiểm chứng.
+- Repo cục bộ Ra2026 vẫn ở `a65885b` (chứa file game, chưa push) → người dùng cần `git fetch origin` + `git reset origin/main`.
