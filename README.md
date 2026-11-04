@@ -21,19 +21,22 @@ Game chiến thuật thời gian thực **của riêng dự án**, dựng trên 
 
 ## 2. Cài đặt (Windows 10/11)
 
-1. Đặt hai thư mục cạnh nhau:
+### Cách 1 — bấm là chạy (khuyên dùng)
+
+1. Giải nén bản portable `RAReborn-<phiên bản>-win-x64-portable.zip` vào cạnh thư mục game:
    ```
    E:\games\Ra2\Ra2026     ← bộ game RA2 + YR (ra2.mix, ra2md.mix, langmd.mix, expandmd01.mix…)
-   E:\games\Ra2\RAReborn   ← repo này
+   E:\games\Ra2\RAReborn   ← bản portable, có RAReborn.exe
    ```
-   ```
-   git clone https://github.com/haitruonginfotech/ra2026.git E:\games\Ra2\RAReborn
-   ```
-2. Cài [.NET 6 SDK](https://dotnet.microsoft.com/download/dotnet/6.0) (x64).
-3. Trong `RAReborn`, chạy `make.cmd` → chọn `all` (tự tải và build engine OpenRA).
-4. Chạy `launch-game.cmd`.
+2. Bấm đúp **`RAReborn.exe`**. Không cần cài .NET (đã kèm sẵn), không ghi registry.
 
-Chế độ **portable**: cài đặt, save, log nằm trong `RAReborn\Support`, không ghi vào AppData hay registry.
+Chế độ **portable**: cài đặt, save, log nằm trong `RAReborn\Support`, không ghi vào AppData.
+
+### Cách 2 — chạy từ mã nguồn (cho người phát triển)
+
+1. `git clone https://github.com/haitruonginfotech/ra2026.git E:\games\Ra2\RAReborn-src` (cạnh `Ra2026`).
+2. Cài [.NET 6 SDK](https://dotnet.microsoft.com/download/dotnet/6.0) (x64), chạy `make.cmd` → `all`, rồi `launch-game.cmd`.
+3. Đóng gói bản portable (trên Linux): `packaging/windows/build-portable.sh <phiên bản> <thư mục ra>`.
 
 > ⚠️ Đừng chạy `git pull` nhánh `main` bên trong thư mục `Ra2026` (thư mục game cũ): nhánh này giờ là RA Reborn, git sẽ xóa `BINKW32.DLL`, `Play_*.exe`. Trong `Ra2026` hãy chuyển sang nhánh cũ: `git fetch origin` rồi `git checkout -B ra2026-legacy origin/ra2026-legacy`.
 
@@ -65,6 +68,8 @@ GPLv3 (giống OpenRA và OpenRA RA2 mod), xem `LICENSE`. Bản quyền tài s�
 ## 6. Lịch sử thay đổi
 
 ### 2026-11-04
+- 🖱️ **Bản Windows portable bấm là chạy** (`RAReborn.exe`, .NET kèm sẵn, 64-bit): script `packaging/windows/build-portable.sh`. Thử trên Wine giả lập Windows 11: vào tới màn hình thiết lập đầu tiên, nhật ký nằm trong `RAReborn\Support` (portable).
+- 💬 Thông báo đầu game đổi thành “RA Reborn - early preview”.
 - 🚀 Khởi tạo **RA Reborn** trên nhánh `main` từ OpenRA RA2 mod (commit upstream trong `UPSTREAM_RA2_COMMIT`), engine `release-20231010`.
 - 📦 Đổi mã mod `ra2` → `rareborn`; đọc file game từ `../Ra2026`; nạp thêm ra2md/langmd/expandmd01 và các mix YR lồng bên trong (nạp sau để đè RA2).
 - 🎖️ 4 bậc lên cấp Tân binh / Đồng / Vàng / Kim cương, huy hiệu vẽ mới (16×16).

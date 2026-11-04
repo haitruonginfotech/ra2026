@@ -11,35 +11,35 @@ Background@MAINMENU_PRERELEASE_NOTIFICATION:
 			Height: 25
 			Font: Bold
 			Align: Center
-			Text: Red Alert 2 developer preview
+			Text: RA Reborn - early preview
 		Label@PROMPT_TEXT_A:
 			X: 15
 			Y: 50
 			Width: PARENT_RIGHT - 30
 			Height: 16
 			Align: Center
-			Text: This pre-alpha build of OpenRA's Red Alert 2 mod is made available
+			Text: RA Reborn is built on OpenRA and the OpenRA Red Alert 2 mod,
 		Label@PROMPT_TEXT_B:
 			X: 15
 			Y: 68
 			Width: PARENT_RIGHT - 30
 			Height: 16
 			Align: Center
-			Text: for the community to follow development and as example for modders.
+			Text: using the Red Alert 2 + Yuri's Revenge files from your ../Ra2026 folder.
 		Label@PROMPT_TEXT_C:
 			X: 15
 			Y: 104
 			Width: PARENT_RIGHT - 30
 			Height: 16
 			Align: Center
-			Text: Many features are missing or incomplete, performance has not been
+			Text: New: 4 veterancy ranks (Bronze, Gold, Diamond). The Yuri faction
 		Label@PROMPT_TEXT_D:
 			X: 15
 			Y: 122
 			Width: PARENT_RIGHT - 30
 			Height: 16
 			Align: Center
-			Text: optimized, and balance will not be addressed until a future beta.
+			Text: and several features are still in progress.
 		Label@PROMPT_TEXT_E:
 			X: 15
 			Y: 140

@@ -21,19 +21,22 @@ The project's **own** real-time strategy game, built on [OpenRA](https://github.
 
 ## 2. Install (Windows 10/11)
 
-1. Put the two folders side by side:
+### Option 1 — click and play (recommended)
+
+1. Extract the portable build `RAReborn-<version>-win-x64-portable.zip` next to the game folder:
    ```
    E:\games\Ra2\Ra2026     ← RA2 + YR game files (ra2.mix, ra2md.mix, langmd.mix, expandmd01.mix…)
-   E:\games\Ra2\RAReborn   ← this repo
+   E:\games\Ra2\RAReborn   ← portable build, contains RAReborn.exe
    ```
-   ```
-   git clone https://github.com/haitruonginfotech/ra2026.git E:\games\Ra2\RAReborn
-   ```
-2. Install the [.NET 6 SDK](https://dotnet.microsoft.com/download/dotnet/6.0) (x64).
-3. In `RAReborn`, run `make.cmd` → choose `all` (downloads and builds the OpenRA engine).
-4. Run `launch-game.cmd`.
+2. Double-click **`RAReborn.exe`**. No .NET install needed (bundled), nothing written to the registry.
 
-**Portable** mode: settings, saves and logs live in `RAReborn\Support`, nothing goes to AppData or the registry.
+**Portable** mode: settings, saves and logs live in `RAReborn\Support`, nothing goes to AppData.
+
+### Option 2 — run from source (developers)
+
+1. `git clone https://github.com/haitruonginfotech/ra2026.git E:\games\Ra2\RAReborn-src` (next to `Ra2026`).
+2. Install the [.NET 6 SDK](https://dotnet.microsoft.com/download/dotnet/6.0) (x64), run `make.cmd` → `all`, then `launch-game.cmd`.
+3. Build the portable package (on Linux): `packaging/windows/build-portable.sh <version> <outdir>`.
 
 > ⚠️ Do not `git pull` branch `main` inside the old `Ra2026` game folder: main is now RA Reborn and git would delete `BINKW32.DLL` and `Play_*.exe`. In `Ra2026` switch to the old branch: `git fetch origin`, then `git checkout -B ra2026-legacy origin/ra2026-legacy`.
 
@@ -65,6 +68,8 @@ GPLv3 (same as OpenRA and the OpenRA RA2 mod), see `LICENSE`. Red Alert 2 / Yuri
 ## 6. Changelog
 
 ### 2026-11-04
+- 🖱️ **Click-and-play Windows portable build** (`RAReborn.exe`, .NET bundled, 64-bit): script `packaging/windows/build-portable.sh`. Tested under Wine in Windows 11 mode: reaches the first-run setup screen, logs go to `RAReborn\Support` (portable).
+- 💬 Startup notice renamed to “RA Reborn - early preview”.
 - 🚀 Started **RA Reborn** on `main` from the OpenRA RA2 mod (upstream commit in `UPSTREAM_RA2_COMMIT`), engine `release-20231010`.
 - 📦 Mod id `ra2` → `rareborn`; reads game files from `../Ra2026`; also mounts ra2md/langmd/expandmd01 and the nested YR mixes (mounted later so they override RA2).
 - 🎖️ 4 veterancy ranks Rookie / Bronze / Gold / Diamond with new 16×16 insignia.

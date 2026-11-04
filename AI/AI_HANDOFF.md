@@ -30,3 +30,11 @@ _Cập nhật: 2026-11-04 (Asia/Ho_Chi_Minh) · Agent: Claude (cloud session + d
 1. Phe Yuri mốc 1a: faction + nhà + quân từ rulesmd (art YR), cơ chế đặc biệt làm đơn giản.
 2. Bản build Windows chạy thử (hoặc hướng dẫn make.cmd) → người dùng test 4 bậc + 3 phe.
 3. Mốc 1b: viết trait C# cho cơ chế Yuri.
+
+## 2026-11-04 11:50 — Bản Windows portable (RAReborn.exe)
+- Người dùng muốn bấm 1 file .exe như Play_YR thay vì cài .NET SDK. Viết `packaging/windows/build-portable.sh` (dùng hàm đóng gói của OpenRA: install_assemblies/install_data/install_mod_assemblies/install_windows_launcher; dotnet publish win-x64 self-contained; KHÔNG makensis, KHÔNG rcedit) → thư mục `RAReborn/` + zip ~48 MB; tạo sẵn `Support/` để chạy portable.
+- Thử Wine 9 (prefix 64-bit, win11): mặc định ANGLE/D3D lỗi vì trình biên dịch shader của Wine chưa hỗ trợ (E5017) — giới hạn của Wine; với `Graphics.GLProfile=Modern` game chạy, hiện thông báo + màn thiết lập đầu tiên, log trong `Support/Logs` (portable OK).
+- Trên máy người dùng: `E:\games\Ra2\RAReborn` = bản portable 2026.11.04 (608 file, sha256 zip 6f02e8f4…); mã nguồn clone đổi tên thành `E:\games\Ra2\RAReborn-src` (có `_pkg/` chứa 2 phần zip, đã gitignore). Người dùng đã chuyển git trong Ra2026 sang `ra2026-legacy`.
+- Vì đặt ở `RAReborn` (cạnh Ra2026), EngineDir = thư mục exe → `../Ra2026` đúng; TestFiles của ModContent thỏa.
+- CHƯA kiểm chứng: chạy trên Windows thật (ANGLE/D3D trên GPU thật), vào trận, 4 bậc trong trận.
+
