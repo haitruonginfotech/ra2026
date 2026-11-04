@@ -1,142 +1,71 @@
-# Ra2026 — Red Alert 2 & Yuri's Revenge portable + mod tools
+# RA Reborn — Red Alert 2 + Yuri's Revenge on the OpenRA engine
 
 [Tiếng Việt](README.md) · **English**
 
-A **portable** setup for Red Alert 2 + Yuri's Revenge: the game **writes nothing to the Windows registry or outside its own folder**. Also included:
+The project's **own** real-time strategy game, built on [OpenRA](https://github.com/OpenRA/OpenRA) (open-source engine, GPLv3) and developed from the [OpenRA Red Alert 2 mod](https://github.com/OpenRA/ra2). Goal: play like Red Alert 2 + Yuri's Revenge, but with everything moddable — e.g. **4 veterancy ranks**.
 
-- 📘 **Player handbook** (Vietnamese PDF, 24 pages): 3 factions, 10 countries, illustrated units & buildings, superweapons, hotkeys, tricks.
-- 🛠️ **RA2 Mod Editor**: an offline web page for editing the game rules (`rulesmd.ini` / `rules.ini`) visually.
-- 🔍 **Malware scan notes** for the original repack.
+> **No EA game files included.** Art and audio are, for now, read from your own Red Alert 2 + Yuri's Revenge copy. EA has not endorsed and does not support this project.
+>
+> The old Ra2026 project (portable build + Mod Editor + handbook) lives on branch [`ra2026-legacy`](https://github.com/haitruonginfotech/ra2026/tree/ra2026-legacy).
 
-> **This repo contains no game files.** You need your own copy of Red Alert 2 + Yuri's Revenge. Some files in `AI/` contain data extracted from the game (rules `.ini` files, icons in the Mod Editor, images in the handbook), which is copyrighted by EA.
+## 1. Status
 
----
+| Item | Status |
+|---|---|
+| OpenRA `release-20231010` + RA2 mod, renamed **RA Reborn** (`rareborn`) | ✅ builds, rules & sprite checks clean |
+| Reads game files straight from the sibling `Ra2026` folder, adds Yuri's Revenge files | ✅ |
+| **4 veterancy ranks**: Rookie · Bronze · Gold · Diamond (new insignia) | ✅ (not yet play-tested on Windows) |
+| Allied & Soviet factions (10 countries) | ✅ from the RA2 mod |
+| **Yuri faction** | 🚧 in progress (milestone 1a: all buildings & units, special mechanics simplified) |
+| Yuri special mechanics (Grinder, Slave Miner, Gatling, Magnetron, Chaos, Genetic Mutator) | ⏳ milestone 1b |
 
-## 1. Layout
+## 2. Install (Windows 10/11)
 
-The repository root **is the game folder** (on the author's machine: `E:\games\Ra2\Ra2026`).
+1. Put the two folders side by side:
+   ```
+   E:\games\Ra2\Ra2026     ← RA2 + YR game files (ra2.mix, ra2md.mix, langmd.mix, expandmd01.mix…)
+   E:\games\Ra2\RAReborn   ← this repo
+   ```
+   ```
+   git clone https://github.com/haitruonginfotech/ra2026.git E:\games\Ra2\RAReborn
+   ```
+2. Install the [.NET 6 SDK](https://dotnet.microsoft.com/download/dotnet/6.0) (x64).
+3. In `RAReborn`, run `make.cmd` → choose `all` (downloads and builds the OpenRA engine).
+4. Run `launch-game.cmd`.
+
+**Portable** mode: settings, saves and logs live in `RAReborn\Support`, nothing goes to AppData or the registry.
+
+> ⚠️ Do not `git pull` branch `main` inside the old `Ra2026` game folder: main is now RA Reborn and git would delete `BINKW32.DLL` and `Play_*.exe`. In `Ra2026` switch to the old branch: `git fetch origin`, then `git checkout -B ra2026-legacy origin/ra2026-legacy`.
+
+## 3. Four veterancy ranks
+
+| Rank | Insignia | Kills needed (cumulative, × own cost) | Bonus |
+|---|---|---|---|
+| 1 Rookie | — | 0 | — |
+| 2 Bronze | 1 bronze chevron | 4× | firepower +10%, damage taken −10%, speed +10%, reload −10% |
+| 3 Gold | 2 gold chevrons | 9× | +20%, −18%, +20%, −18%, better accuracy |
+| 4 Diamond | diamond | 15× | +30%, −25%, +30%, −25%, self-heal, elite weapons |
+
+Config: `mods/rareborn/rules/defaults.yaml` (`^GainsExperience`). Insignia: `artsrc/ranks/make_ranks.py` → `mods/rareborn/bits/ranks/`.
+
+## 4. Layout
 
 | Path | Contents |
 |---|---|
-| `Play_YR.exe` | Launches Yuri's Revenge |
-| `Play_RA2.exe` | Launches Red Alert 2 |
-| `BINKW32.DLL` | Write guard: virtual registry + blocks file writes outside the folder |
-| `AI/guide/guide-20261102-vi.pdf` | Player handbook (current) |
-| `AI/tools/RA2_Mod_Editor.html` | Rules editor |
-| `AI/tools/src/` | Source: `portable-guard`, `mod-editor`, `guide` |
-| `AI/mod/` | Reference rules: official & modded, both games |
-| `AI/security/20261030/findings.md` | Malware scan results |
-| `AI/AI_HANDOFF.md`, `AI/PROJECT_RULES.md` | Detailed status & project rules |
+| `mods/rareborn/` | Rules (`rules/`), weapons, art (`sequences/`), UI, maps |
+| `OpenRA.Mods.RA2/` | Mod-specific C# (mind control, carriers, mirage…) |
+| `artsrc/` | Art sources (rank insignia…) |
+| `AI/` | Project status (`AI_HANDOFF.md`), rules (`PROJECT_RULES.md`) |
+| `README.openra-ra2.md` | Original OpenRA RA2 mod README |
 
-Every other game file in the folder is ignored by `.gitignore`.
+## 5. License
 
-## 2. Differences from the original
+GPLv3 (same as OpenRA and the OpenRA RA2 mod), see `LICENSE`. Red Alert 2 / Yuri's Revenge game assets are © Electronic Arts.
 
-Byte-for-byte comparison with the original repack: **296 game files unchanged**. The repo contains only what was modified or added:
-
-| Type | Files | In git |
-|---|---|---|
-| Modified | `BINKW32.DLL` (replaced by the write guard) | ✅ |
-| Added | `Play_RA2.exe`, `Play_YR.exe`, `README.md`, `README.en.md`, `.gitignore`, `AI/` (23 files) | ✅ |
-| Renamed (original content) | original `BINKW32.DLL` → `binkw32_o.dll`; `cnc-ddraw config.exe` → `cnc-ddraw config.exe.disabled` | ❌ (third-party files) |
-| Removed | `keygen\` (Keygen.exe, RegSetup.exe, fdxra2k.nfo), `LAN-play-serials\` (4× ra2.reg + Woldata.key), `Ra2.exe`, `RA2MD.exe`, `YURI.exe`, `RegSetup.exe`, `SetupReg.exe`, `uninstal.exe`, `uninstal.ini`, `DRVMGT.DLL`, `PATCHGET.DAT`, `patchgetmd.dat`, `PATCHW32.DLL`, `src.7z`, `aqrit.cfg` | ❌ |
-
-## 3. Install
-
-1. Clone the repo into the folder that will hold the game:
-   ```
-   git clone https://github.com/haitruonginfotech/ra2026.git Ra2026
-   ```
-2. Copy all Red Alert 2 + Yuri's Revenge files into `Ra2026\` **except**: `keygen\`, `LAN-play-serials\`, `RegSetup.exe`, `SetupReg.exe`, `uninstal.exe/.ini`, `DRVMGT.DLL`, `PATCHGET.DAT`, `patchgetmd.dat`, `PATCHW32.DLL`, `src.7z`, `aqrit.cfg`, `Ra2.exe`, `RA2MD.exe`, `YURI.exe`.
-3. **Do not** overwrite the repo's `BINKW32.DLL`: save the game's own `BINKW32.DLL` as `binkw32_o.dll`.
-4. Rename `cnc-ddraw config.exe` to `cnc-ddraw config.exe.disabled`.
-
-## 4. Playing
-
-- Double-click `Play_YR.exe` (Yuri's Revenge) or `Play_RA2.exe` (Red Alert 2).
-- **Do not** start `game.exe` / `gamemd.exe` directly: the game exits immediately.
-- Registry data the game "writes" is kept in `portable\registry.txt`. Every blocked write outside the folder is logged in `portable\blocked.log` (`COM-PORTABLE` lines mean the guard loaded `Blowfish.dll` itself; normal).
-- To uninstall, delete the folder.
-
-### Windows 11
-
-The project works on Windows 10 and 11 (64-bit, ARM PCs included). `BINKW32.DLL` and `Play_*.exe` only call libraries present in every Windows version (kernel32, advapi32, user32, msvcrt). Notes:
-
-- **No** compatibility mode or *Run as administrator* is needed. Turn them off if set: the portable build does not need admin rights.
-- Keep the game folder on its own drive (e.g. `E:\games\Ra2\Ra2026`). **Do not** put it in `C:\Program Files` (writes are blocked) or a OneDrive folder (Desktop/Documents are often synced by OneDrive).
-- **SmartScreen:** if you download the repo as a ZIP, Windows may show “Windows protected your PC” when opening `Play_*.exe`. Click *More info → Run anyway*, or right-click the ZIP → *Properties → Unblock* before extracting. Cloning with `git` avoids this.
-- **Smart App Control** (on by default only on clean installs of Windows 11 22H2+) can block unsigned executables outright: the self-built `Play_*.exe`, and the repack's `game.exe`/`gamemd.exe`. Check *Windows Security → App & browser control → Smart App Control*; it must be Off to play.
-- **Microsoft Defender** may flag `BINKW32.DLL` because it patches the game's import table (to block writes). If it is quarantined, restore it and add the `Ra2026` folder to *Exclusions*. Source code is in `AI/tools/src/portable-guard/`.
-- **Black screen / crash after changing resolution:** open the Mod Editor → **Hiệu năng** (Performance) → change the renderer (Direct3D 9 ↔ OpenGL ↔ GDI).
-- Mod Editor: use Edge (built in) or Chrome. Bahnschrift/Segoe UI fonts ship with Windows 11.
-
-## 5. Editing the rules (modding)
-
-1. Open `AI\tools\RA2_Mod_Editor.html` in **Chrome** or **Edge**.
-2. Click **Mở thư mục game** (Open game folder) and choose the `Ra2026` folder (the one containing `gamemd.exe`).
-3. Pick a rule set: the bundled mod or the official rules.
-4. Edit cost, strength, speed, weapons, superweapons, general rules… or use **Mod nhanh** (quick mod).
-5. Click **Lưu vào game** (Save to game), then start `Play_YR` / `Play_RA2` to test.
-
-`Ctrl+Z` undoes. Previous files are backed up in `mod_backups\`. **Khôi phục…** (Restore) returns the game to the official or the bundled mod rules. LAN play: every PC must use the same rules file.
-
-### Reducing lag in big battles
-
-The RA2/YR engine runs the game logic on **a single thread**, so large battles stutter no matter how many CPU cores you have. In the Mod Editor, click **Hiệu năng** (Performance):
-
-- **Display** (`ddraw.ini`, shared by both games): Direct3D 9 renderer, 60 FPS cap, V-Sync, let the renderer run on another CPU core (`singlecpu=false`), screen mode.
-- **Sharpness** (`ddraw.ini`): scaling filter (blurry bilinear → crisp nearest, or xBRZ/Lanczos via OpenGL), keep aspect ratio, integer scaling.
-- **In-game settings** (`RA2MD.INI` / `RA2.INI`): resolution (the editor detects your screen resolution), detail level. Quit the game before applying.
-- **Rules**: reduce or remove explosion debris, let the game drop effects sooner when FPS falls, remove smoke/fire on damaged buildings.
-
-**Đề xuất cho trận đông quân** (Recommended for big battles) fills in suggested values. **Hình nét nhất** (Sharpest image) sets the game resolution to your screen's (no upscaling) + nearest + keep aspect ratio; sharpest, but you see more of the map, units look smaller and it is heavier. For sharp and light: keep a lower resolution and pick **xBRZ**. **Áp dụng** (Apply) writes the config files straight into the game folder (old copies go to `mod_backups\`); rule changes go through **Lưu vào game** (Save to game) and can be undone with `Ctrl+Z`. If the game hangs or crashes with multiple CPU cores enabled, switch it back to “Không” (No).
-
-> **Note:** the repack ships with mods. RA2 uses a loose `rules.ini`; Yuri's Revenge uses `expandmd03.mix` (about 3× faster building, 100% sell refund, 51 new units, Harrier removed). The PDF handbook describes the **official** rules.
-
-## 6. Rebuilding from source
-
-See [`AI/tools/src/README.md`](AI/tools/src/README.md): mingw-w64 for the DLL/EXEs, Python + Playwright for the handbook, `template.html` + data for the Mod Editor.
-
----
-
-## 7. Changelog
+## 6. Changelog
 
 ### 2026-11-04
-- 🐞 **Fixed “\*\*\*FATAL\*\*\* String Manager failed to initialize properly” on Windows**: the game registers `Blowfish.dll` (COM) in the virtual registry, but Windows' `CoCreateInstance` only reads the real registry. `BINKW32.DLL` now loads `Blowfish.dll` straight from the game folder when Windows reports the class as not registered. Still nothing is written to the real registry. `portable\blocked.log` gains `COM-PORTABLE` lines (normal, not errors).
-
-### 2026-11-02
-- 🤖 **Unit & building pictures upscaled with AI (Real-ESRGAN x4plus)**: 434 cameos 60×48 → 240×192 (WebP), sharp and smooth in the detail view; the list uses the same images scaled down. The AI invents some detail, so pictures may differ slightly from the originals. Editor file ~4.3 MB.
-- 📋 **Changes dialog with pictures and explanations**: grouped per unit/section, with the cameo (or a Rules / Weapon / Building badge), Vietnamese name, type (e.g. “weapon of Sniper”, “building · civilian/decoration, not buildable”), and a label and explanation for each property; summary line counting changes by type.
-- 🖼️ **Sharper unit & building pictures in the Mod Editor**: re-extracted all 434 original cameos (60×48) from the game files as lossless 8-bit PNG (previously compressed JPEG), shown at native size in the list and at exact ×3 (×2 on phones) with `image-rendering: pixelated`, transparent background.
-- 🔎 **Sharper in-game image**: the blur came from cnc-ddraw upscaling with bilinear filtering (`d3d9linear=true`, `shader=bilinear.glsl`) and stretching (`maintas=false`). The Performance dialog gains a **Sharpness** section (nearest / xBRZ / Lanczos, keep aspect, integer scaling) and a **Hình nét nhất** (Sharpest image) button (screen-native resolution).
-- 🪟 **Windows 11** notes (SmartScreen, Smart App Control, Defender, renderer); re-tested under Wine reporting Windows 11.
-- 🖥️ Mod Editor fits more screens: at 1024–1439 px the button bar wraps to 2 rows (before, **Lưu vào game** was pushed off-screen at 1024 px); 1920+ px shows 6–7 fields per row.
-- ⚡ **Mod Editor → Performance**: edit `ddraw.ini` (renderer, FPS cap, V-Sync, multi-core, screen mode), resolution and detail level in `RA2MD.INI`/`RA2.INI`, and cut debris/effects in the rules; written straight to the files with backups. Includes a recommended preset for big battles.
-- 🏷️ Version milestone `v2026.11.02` (baseline) to roll back to.
-- 📋 The repo keeps only files **modified or added** compared with the original (byte-checked: 296 game files unchanged); added a differences table in section 2.
-- 🔁 **Repository root changed to the `Ra2026` game folder**: `BINKW32.DLL` and `Play_*.exe` sit at the root, `AI/` next to the game files; `.gitignore` allows only project files.
-- 📝 README renamed to `README.md` (VI) and `README.en.md` (EN) so it no longer clashes with the game's own `Readme.txt` (Windows file names are case-insensitive).
-- 🌐 GitHub: EN+VI description and 20 topics for SEO; source, tools and documents published to the repo.
-- ➕ `.gitignore` and bilingual README with guide and changelog.
-- 📁 Moved documents, tools and source into `AI/` (per the `CLAUDE.md` v5.7 policy); added `AI_HANDOFF.md`, `PROJECT_RULES.md`, `security/20261030/findings.md`.
-- 🛠️ **RA2 Mod Editor**: edits all YR & RA2 rules, real unit icons, quick mods, undo, unit cloning, backup & restore.
-- ⚠️ Found that Yuri's Revenge is modded via `expandmd03.mix` (earlier reported as stock by mistake); handbook corrected to `guide-20261102-vi.pdf`.
-- ➕ Reference rules under `AI/mod/`.
-
-### 2026-10-31
-- 📘 Player handbook PDF (26 pages).
-- 🖨️ Ink-saving print edition (24 pages): no cover, white background; icons in the quick-reference table, tech-building images, new **Tricks** chapter.
-- ➕ Extracted the official `rulesmd.ini` for manual modding.
-
-### 2026-10-30
-- 🔍 Static malware scan of the repack: no malware found; the keygen's HackTool detection by antivirus software is a crack-tool warning.
-- 🎮 Built the portable setup: `BINKW32.DLL` guard (virtual registry, blocks writes outside the folder), `Play_RA2.exe` / `Play_YR.exe` launchers; removed keygen, setup tools, SafeDisc driver, original launchers; disabled cnc-ddraw config.
-- ✅ Tested under Wine: the games start without writing to the registry or outside the folder.
-
-## 8. Not yet verified
-
-- Running the game on real Windows 11 with the guard installed. Tested under Wine reporting Windows 11 (build 22000): YR and RA2 start via `Play_*.exe`, registry goes to `portable\registry.txt`, nothing is written outside the folder. Wine is no substitute for real Windows (graphics, Defender, Smart App Control).
-- The Mod Editor's Open folder / Save / Restore / Performance buttons in real Chrome/Edge (tested with a simulated folder in Chromium).
-- The real-world lag reduction of each Performance option; removing building smoke/fire has not been tried in-game.
-
-Details: [`AI/AI_HANDOFF.md`](AI/AI_HANDOFF.md).
+- 🚀 Started **RA Reborn** on `main` from the OpenRA RA2 mod (upstream commit in `UPSTREAM_RA2_COMMIT`), engine `release-20231010`.
+- 📦 Mod id `ra2` → `rareborn`; reads game files from `../Ra2026`; also mounts ra2md/langmd/expandmd01 and the nested YR mixes (mounted later so they override RA2).
+- 🎖️ 4 veterancy ranks Rookie / Bronze / Gold / Diamond with new 16×16 insignia.
+- 🗂️ The old Ra2026 project moved to branch `ra2026-legacy`.

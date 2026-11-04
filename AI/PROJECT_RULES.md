@@ -1,15 +1,14 @@
-# PROJECT_RULES — Ra2026 (gốc repo = E:\games\Ra2\Ra2026)
+# PROJECT_RULES — RA Reborn (nhánh `main` của haitruonginfotech/ra2026)
 
-1. **Gốc repo là thư mục game `Ra2026`.** Chỉ các file của dự án được đưa lên git (xem `.gitignore`): `BINKW32.DLL`, `Play_RA2.exe`, `Play_YR.exe`, `AI/`, `README.md`, `README.en.md`, `.gitignore`. **Không bao giờ** commit file game của EA (exe, mix, csf, ini game, save...). GitHub cũng từ chối file > 100 MB (`ra2.mix`, `ra2md.mix`).
-2. **Không sửa file game gốc** ngoài các thay đổi tích hợp đã ghi trong `AI/AI_HANDOFF.md`. Đặc biệt: không ghi đè `Readme.txt` của game (Windows không phân biệt hoa/thường → README dự án dùng `.md`).
-3. Giữ nguyên file tích hợp: `BINKW32.DLL` (guard), `binkw32_o.dll` (Bink gốc, không lên git), `Play_*.exe`. Không đưa lại `Ra2.exe`/`RA2MD.exe`/`YURI.exe`, keygen, RegSetup/SetupReg/uninstal, `DRVMGT.DLL`, `PATCH*`, file `.reg`.
-4. Chạy game **chỉ qua `Play_*.exe`**.
-5. Luật chơi: `rules.ini` (RA2) / `rulesmd.ini` (YR) rời trong thư mục được ưu tiên hơn `.mix`. Nếu không có `rulesmd.ini` rời, YR dùng luật mod trong `expandmd03.mix`. Bản tham chiếu: `AI/mod/`.
-6. Sửa luật bằng `AI/tools/RA2_Mod_Editor.html` (tự sao lưu vào `mod_backups/`, thư mục này không lên git). Chơi LAN: các máy phải dùng cùng file luật.
-7. Thư mục nguồn đối chiếu ngoài repo (không sửa): `E:\games\Ra2\ra2-yuris-revenge[taira2.org]`, `SETUP_RA2`, `Yuris-Revenge`, `2.Red_alert_2_setup.rar`.
-8. Tài liệu, công cụ, mã nguồn, báo cáo mới để trong `AI/` theo `D:\AI\.claude\CLAUDE.md` (v5.7). Cập nhật `AI/AI_HANDOFF.md` sau mỗi lần ghi.
-9. **Tự động push (người dùng yêu cầu 02/11/2026):** sau MỖI lần cập nhật file của dự án (file được git theo dõi: `AI/`, `BINKW32.DLL`, `Play_*.exe`, `README.md`, `README.en.md`, `.gitignore`), agent tự commit + push lên `origin/main` của `https://github.com/haitruonginfotech/ra2026`, không cần hỏi lại. Quy trình:
-   - Commit message tiếng Anh, ngắn, nêu rõ thay đổi; cập nhật `AI/AI_HANDOFF.md` trong cùng đợt.
-   - Chỉ push file dự án; **không bao giờ** push file game (exe/mix/csf/ini game, save…). File mới ở gốc phải được thêm `!/ten-file` vào `.gitignore` trước.
-   - Sau khi push: clone/đọc lại remote để xác minh nội dung trùng với bản trên máy; báo commit SHA cho người dùng.
-   - Cách push hiện có: (a) `git push` nếu agent có quyền ghi repo (Claude GitHub App/credential); (b) nếu không, tải lên qua trang "Upload files" của GitHub trong Chrome đã đăng nhập của người dùng. Nếu không cách nào khả dụng: báo rõ "CHƯA PUSH" và liệt kê file cần push.
+1. **Nhánh:** `main` = RA Reborn (OpenRA). `ra2026-legacy` = dự án Ra2026 cũ (portable guard, Mod Editor, sổ tay) — chỉ sửa khi người dùng yêu cầu việc của Ra2026, và push vào nhánh đó, không vào `main`.
+2. **Không bao giờ** commit file game của EA (`*.mix`, `*.csf`, `*.bag`, exe, save, ini game…). Game đọc chúng lúc chạy từ `../Ra2026` hoặc `Support/Content/rareborn`. `.gitignore` đã bỏ qua `/Ra2026`, `/Support`, `engine`.
+3. Mã mod là `rareborn` (`mods/rareborn`). Tham chiếu nội bộ dùng `rareborn|…`. Engine OpenRA cố định theo `ENGINE_VERSION` trong `mod.config` (hiện `release-20231010`).
+4. **Kiểm tra trước khi push** (cần .NET 6 SDK): `make` → `./utility.sh --check-yaml` và `./utility.sh --check-missing-sprites` phải sạch (0 lỗi, 0 “does not exist”) khi có file game ở `../Ra2026`.
+5. Đồ họa mới do dự án tự làm để trong `artsrc/` (kèm script tạo) và `mods/rareborn/bits/`. Đồ họa EA chỉ được đọc từ file game của người dùng, không chép vào repo.
+6. Giấy phép GPLv3 (kế thừa OpenRA / OpenRA RA2 mod): giữ `LICENSE`, ghi công tác giả gốc, ghi commit upstream trong `UPSTREAM_RA2_COMMIT`.
+7. Tài liệu, báo cáo để trong `AI/` theo `D:\AI\.claude\CLAUDE.md` (v5.7). Cập nhật `AI/AI_HANDOFF.md` sau mỗi lần ghi.
+8. **Tự động push (người dùng yêu cầu 02/11/2026):** sau MỖI lần cập nhật file dự án, agent tự commit + push lên `origin/main`, không cần hỏi lại:
+   - Commit message tiếng Anh, ngắn, nêu rõ thay đổi; cập nhật `AI/AI_HANDOFF.md` và changelog trong `README.md`/`README.en.md` cùng đợt.
+   - Sau khi push: đọc lại remote để xác minh; báo commit SHA cho người dùng.
+   - Cách push: `git push`; nếu không được thì trang “Upload files” của GitHub trong Chrome người dùng; nếu không cách nào khả dụng: báo “CHƯA PUSH”.
+9. Ngôn ngữ: README mặc định tiếng Việt (`README.md`), bản tiếng Anh `README.en.md`.

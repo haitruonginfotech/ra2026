@@ -1,145 +1,32 @@
-# AI_HANDOFF — E:\games\Ra2
+# AI_HANDOFF — RA Reborn (repo haitruonginfotech/ra2026, nhánh main)
 
-_Cập nhật: 2026-11-02 (Asia/Ho_Chi_Minh) · Agent: Claude (Cowork, cloud session + device bridge tới máy haitruong-it)_
+_Cập nhật: 2026-11-04 (Asia/Ho_Chi_Minh) · Agent: Claude (cloud session + device bridge tới máy người dùng)_
 
 ## Dự án
-- **PROJECT_ROOT / gốc git:** `E:\games\Ra2\Ra2026` (đổi ngày 02/11 theo yêu cầu người dùng; trước đó là `E:\games\Ra2`). Remote: `https://github.com/haitruonginfotech/ra2026` (main). Mọi đường dẫn `AI/...` dưới đây là tương đối với Ra2026.
-- **Nội dung:** Red Alert 2 + Yuri's Revenge (bản repack taira2.org) → bản chơi portable `Ra2026`, sổ tay, công cụ mod.
-- **Chế độ:** DESKTOP_DIRECT. Ghi trực tiếp vào thư mục đã kết nối, đã được người dùng cho phép. Chính sách `D:\AI\.claude\CLAUDE.md` v5.7 đã đọc ngày 02/11 (trước đó chưa truy cập được: `GLOBAL_INSTRUCTIONS_UNAVAILABLE`, `LOCAL_SKILLS_UNAVAILABLE`).
+- **RA Reborn**: game RTS riêng dựng trên OpenRA (`release-20231010`) + OpenRA RA2 mod (upstream `OpenRA/ra2`, commit trong `UPSTREAM_RA2_COMMIT`), mã mod `rareborn`. Người dùng chọn “hướng 3” (game riêng), tạm dùng hình/âm thanh RA2+YR từ thư mục game của họ; tên “RA Reborn”; đè lên repo ra2026; mốc 1 phải **đủ 3 phe**.
+- Dự án cũ: nhánh `ra2026-legacy` @ `7a067ff` (đủ handoff lịch sử trong `AI/AI_HANDOFF.md` của nhánh đó). Thư mục game trên máy: `E:\games\Ra2\Ra2026` (vẫn là repo git theo dõi `main` cũ → người dùng cần chuyển sang `ra2026-legacy`, KHÔNG pull main ở đó).
+- Bố cục dự kiến trên máy: `E:\games\Ra2\RAReborn` (repo này) cạnh `E:\games\Ra2\Ra2026` (file game).
 
-## Trạng thái
-| Hạng mục | Trạng thái | Đường dẫn |
-|---|---|---|
-| Quét malware thư mục gốc (30/10) | Xong, không phát hiện mã độc (phân tích tĩnh) | `AI/security/20261030/findings.md`, `evidence/sha256-executables.txt` |
-| Bản portable Ra2026 (30/10) | Tích hợp, đang dùng | `Ra2026/` (xem dưới) |
-| Sổ tay PDF | **Hiện hành:** `AI/guide/guide-20261102-vi.pdf` (24 trang). Bản cũ `guide-20261031-vi.pdf` đã bị thay thế vì ghi sai “YR là bản chuẩn” | `AI/guide/` |
-| RA2 Mod Editor (02/11) | Xong, đã test bằng Playwright | `AI/tools/RA2_Mod_Editor.html` |
-| Luật tham chiếu | `rulesmd-official-yr.ini` (expandmd01), `rulesmd-mod-expandmd03-yr.ini`, `rules-official-ra2.ini` (local.mix) | `AI/mod/` |
-| Mã nguồn | portable-guard, mod-editor, guide | `AI/tools/src/` (README.md) |
-| Git (02/11) | `.gitignore` + `README.txt` (VI) + `README.en.txt` (EN); **đã push 28 file** lên `origin/main` | `E:\games\Ra2\`, github.com/haitruonginfotech/ra2026 |
+## Trạng thái (2026-11-04)
+| Hạng mục | Trạng thái |
+|---|---|
+| Build engine + mod (Linux, .NET 6.0.428) | ✅ `make` 0 cảnh báo |
+| Đọc file game từ `../Ra2026` (+ `../../Ra2026`, `Support/Content/rareborn`) | ✅ kiểm chứng: có file 0 hình thiếu, bỏ file 2.349 hình thiếu |
+| Nạp mix YR (ra2md, langmd, expandmd01, multimd, cachemd, cameomd, conqmd, genermd, iso*md, loadmd, localmd, ntrlmd, sidec02md, snowmd, audiomd) sau RA2 | ✅ |
+| 4 bậc: rank-veteran (Đồng, 400%), rank-gold (Vàng, 900%), rank-elite (Kim cương, 1500%) | ✅ `--check-yaml` sạch; `--resolved-rules e1` có đủ 3 WithDecoration |
+| Huy hiệu mới 16×16 (`artsrc/ranks/make_ranks.py`, palette `rank` từ rank-bronze.png) | ✅ (sửa luôn lỗi: pips.shp YR đè RA2 làm sequence cũ Start 13/14 trỏ sai hình) |
+| Portable: `launch-game.cmd` tạo `Support\` cạnh game | ✅ |
+| Phe Yuri | 🚧 chưa làm |
+| Chạy thử trên Windows | ⏳ chưa |
 
-## Thay đổi trong Ra2026 (tích hợp trực tiếp, cố ý giữ ngoài AI/)
-- Chép từ `ra2-yuris-revenge[taira2.org]`, **loại**: keygen\, LAN-play-serials\, RegSetup/SetupReg/uninstal(.exe/.ini), DRVMGT.DLL, PATCHGET.DAT, patchgetmd.dat, PATCHW32.DLL, src.7z, aqrit.cfg, Ra2.exe, RA2MD.exe, YURI.exe.
-- `BINKW32.DLL` = guard (src: portable.c, SHA-256 b09599b1…); `binkw32_o.dll` = Bink gốc (SHA-256 1fd7ef78…).
-- `Play_RA2.exe` (d4104e90…), `Play_YR.exe` (51edab53…) = launcher không ghi gì.
-- `cnc-ddraw config.exe` → `cnc-ddraw config.exe.disabled`.
-- Runtime tạo: `Ra2026\portable\registry.txt`, `portable\blocked.log`; editor tạo `Ra2026\mod_backups\`.
-- 02/11: đã **chuyển** khỏi Ra2026 sang AI/: RA2_Mod_Editor.html, Huong_dan_choi_RA2_YR.pdf, DOC_TRUOC.txt (→ `AI/guide/ra2026-readme-20261030-vi.txt`, đường dẫn `_portable_src` trong đó nay là `AI/tools/src/portable-guard`), `_portable_src/`, `rulesmd (ban goc).ini`.
-
-## Phát hiện quan trọng
-- **Cả hai game đã bị mod:** RA2 qua `Ra2026\rules.ini` rời (~4.100 khác biệt, thêm >30 bộ binh, ~40 xe). YR qua `expandmd03.mix` (không phải gói chính thức): BuildSpeed .7→.25, RefundPercent 50%→100%, 51 quân/công trình mới, Harrier TechLevel -1, 12 chỉ số quân cũ đổi.
-- game.exe/gamemd.exe bản crack (bỏ SafeDisc); `wsock32.dll` wrapper LAN; `ddraw.dll` = cnc-ddraw.
-
-## Đã kiểm chứng
-- Guard: Wine — test.exe (registry ảo, chặn ghi ngoài thư mục); game.exe & gamemd.exe khởi động qua Play_*.exe, không thêm khóa registry thật, không file mới ngoài thư mục; hành vi mở file giống hệt khi dùng binkw32 gốc.
-- Editor: Chromium/Playwright — mở, sửa field, vũ khí/verses, Luật chung, Mod nhanh, hoàn tác/làm lại, nhân bản, tải file (diff đúng các dòng sửa, giữ comment, CRLF), chuyển RA2. Không lỗi console.
-- PDF: kiểm tra trang bằng render + trích chữ.
-
-## CHƯA kiểm chứng
-- Chưa chạy game trên **Windows thật** sau khi cài guard (Wine headless chỉ đến màn đen do cnc-ddraw).
-- Editor: chưa test thao tác **Mở thư mục / Lưu vào game / Khôi phục** bằng File System Access API thật (headless không chọn thư mục được); chưa test trên Edge/Chrome Windows, chưa test mobile/200% zoom.
-- Mẹo trong sổ tay chưa kiểm chứng trong game: sửa Credits trong RA2MD.INI, bán công trình ra lính, lính bị điều khiển vào Bio Reactor.
-- Không có báo cáo PDF EN/VI cho lần quét (người dùng chưa yêu cầu).
-
-## Thiết kế
-- Editor: `DESIGN_REFERENCE_UNAVAILABLE` lúc làm (chưa có quyền `D:\images\`); hướng “hồ sơ quân sự sáng”: nền thép nhạt #E6EAEE, mực #17212B, hổ phách #B97A06 cho giá trị đã sửa, màu phe; Bahnschrift + Segoe UI. Skill đọc: frontend-design (bản có sẵn trong phiên), không dùng skill local.
-- Style log: `STYLE_LOG_NOT_UPDATED`. Ghi vào `D:\AI\.claude\style-log.md` bị chặn (“Writing to .claude is not permitted via remote tools”). Mục cần thêm (người dùng tự dán nếu muốn): `2026-11-02 | E:\games\Ra2 — RA2 Mod Editor | Bahnschrift + Segoe UI + Cascadia Mono | #E6EAEE #17212B #2B3743 #B97A06 + màu phe | 3-pane tool, unit dossier | no motion | frontend-design (built-in), DESIGN_REFERENCE_UNAVAILABLE`.
+## Kỹ thuật cần nhớ
+- OpenRA FileSystem: gói nạp SAU được ưu tiên (`LastOrDefault`).
+- `utility.sh` có EngineDir = thư mục `engine/` (nên ../Ra2026 = repo/Ra2026 — trong container là symlink tới file game đã stage); `launch-game.cmd` đặt `Engine.EngineDir=".."` = thư mục repo (../Ra2026 = E:\games\Ra2\Ra2026).
+- Engine tải bằng `git clone --branch release-20231010` khi zip GitHub bị chặn; ghi `engine/VERSION`.
+- Mod chỉ có 2 phe; Yuri là lính Liên Xô. Trait sẵn có: MindController/MindControllable, Carrier/BaseSpawner, Mirage, TintedCells, PeriodicExplosion, WeatherControl, ChronoResourceDelivery. Thiếu: Grinder, Slave Miner, Gatling tăng tốc, Magnetron, Chaos gas, Genetic Mutator, Psychic Dominator, Cloning Vats.
+- Người dùng đã đồng ý (04/11 11:14) cho chạy mã OpenRA build từ GitHub.
 
 ## Việc tiếp theo
-1. Người dùng chạy thử Play_YR/Play_RA2 trên Windows; xem `Ra2026\portable\blocked.log`.
-2. Thử editor: Mở thư mục `E:\games\Ra2\Ra2026` → sửa → Lưu → chơi.
-3. (Chờ người dùng) cập nhật sổ tay theo bản mod (51 quân mới, hoàn tiền 100%, bỏ Harrier).
-4. Tùy chọn: báo cáo bảo mật PDF EN/VI; quét Defender/VirusTotal.
-
-## 2026-11-02 — Chuẩn bị đưa lên git
-- Thêm ở gốc repo (người dùng yêu cầu, ngoại lệ hợp lý ngoài `AI/`): `.gitignore`, `README.txt` (VI: hướng dẫn + changelog), `README.en.txt` (EN).
-- `.gitignore` kiểu whitelist: chỉ theo dõi `AI/`, 3 file tích hợp của `Ra2026` (BINKW32.DLL, Play_RA2.exe, Play_YR.exe), README, .gitignore. Bỏ qua file game gốc, `.rar`, `aaa/`, `Ra2026/portable/`, `Ra2026/mod_backups/`, `AI/security/*/evidence/`, rác OS/build.
-- Kiểm thử: dựng lại 851 đường dẫn thật bằng file rỗng ở thư mục tạm trên máy, `git add -A --dry-run` → 28 file, không lọt file game (~13 MB). Thư mục tạm đã xóa.
-- Chưa làm: `git init`/chuyển `.git`, commit, push (shell từ xa không xóa được lock file của git → để người dùng chạy).
-- Lưu ý: repo chứa dữ liệu trích từ game (AI/mod/*.ini, icon trong Mod Editor/PDF) → nên để private.
-
-## 2026-11-02 — SEO repo GitHub
-- Cập nhật qua Chrome của người dùng (API của phiên bị chặn ghi cài đặt): About của `haitruonginfotech/ra2026` → mô tả EN+VI, giữ website haitruongit.com, 20 topics (red-alert-2, yuris-revenge, command-and-conquer, ra2, ra2yr, westwood, rts, retro-gaming, game-modding, mod-editor, rules-ini, portable-apps, windows, dll-proxy, iat-hooking, virtual-registry, offline-web-app, vietnamese, bao-dong-do-2, game-guide); bỏ tick Packages. Đã xác minh bằng `gh api`.
-- Repo **public**. Người dùng đã được cảnh báo về dữ liệu trích từ game (bản quyền EA) và **chọn: public, đẩy hết**.
-- Phiên cloud không push được bằng git (chưa cài Claude GitHub App) → đã **push qua trang Upload files của GitHub** trong Chrome của người dùng (xem mục dưới).
-- Gợi ý chưa làm: README.md (GitHub hiển thị đẹp, tốt cho SEO), ảnh social preview 1280×640, release/tag v2026.11.02 sau khi push.
-
-## 2026-11-02 — Push lên GitHub
-- Cách làm: GitHub web “Upload files” (Chrome của người dùng, đã đăng nhập), 11 commit theo thư mục, từ `05f77da` (README/.gitignore) đến `ee8f4f9` (portable-guard) + commit cập nhật handoff này.
-- Kiểm chứng: clone lại repo → đúng 28 file, **trùng từng byte** với bản trên máy (cmp).
-- Máy local `E:\games\Ra2` **chưa có `.git`**; muốn đồng bộ: `git init -b main` → `git remote add origin https://github.com/haitruonginfotech/ra2026.git` → `git fetch origin` → `git reset origin/main` (giữ nguyên file). Sau đó có thể xóa `aaa\`.
-- Chưa làm: release/tag, README.md, social preview.
-
-## 2026-11-02 — Đổi gốc repo thành Ra2026
-- Người dùng yêu cầu đưa `E:\games\Ra2\Ra2026` lên repo. **Từ chối đưa file game** (bộ game EA có bản quyền, exe đã crack; `ra2.mix` 282 MB vượt giới hạn 100 MB của GitHub). Thay bằng: gốc repo = Ra2026, chỉ file dự án.
-- Trên máy: chuyển `E:\games\Ra2\AI` → `Ra2026\AI`; `.gitignore` → `Ra2026\.gitignore` (viết lại cho gốc mới); README → `README.md` (VI) + `README.en.md` (EN).
-- **Sự cố & khắc phục:** khi chuyển `README.txt` vào Ra2026, nó ghi đè `Readme.txt` gốc của game (Windows không phân biệt hoa/thường) và `.gitignore` cũ của người dùng (nội dung chỉ có `/AI/`). Đã khôi phục `Readme.txt` từ `ra2-yuris-revenge[taira2.org]\Readme.txt`: trùng từng byte (cmp), đúng tên. `.gitignore` cũ được thay bằng bản mới.
-- Repo git cục bộ của người dùng trong Ra2026 (commit `a65885b` "Initial commit - RA2026") **chứa 302 file game**, chưa push → khuyến nghị KHÔNG push; đồng bộ bằng `git fetch origin` + `git reset origin/main`.
-- `E:\games\Ra2\.git` (repo rỗng, chưa commit, do người dùng tạo) giờ không dùng; người dùng có thể xóa.
-- Sổ tay `AI/guide/guide-20261102-vi.pdf` được tạo lại (cùng tài liệu, cùng ngày) với đường dẫn mới `Ra2026\AI\...`.
-
-## 2026-11-02 09:40 — Repo chỉ giữ file đã chỉnh/thêm mới
-- Người dùng đã xóa `E:\games\Ra2\.git` và `aaa\`; yêu cầu git chỉ chứa file đã mod/chỉnh/thêm mới.
-- Đối chiếu từng byte Ra2026 với `ra2-yuris-revenge[taira2.org]`: 296 file giữ nguyên; chỉnh sửa 1 (`BINKW32.DLL`); thêm mới `Play_RA2.exe`, `Play_YR.exe`, `.gitignore`, `README.md`, `README.en.md`, `AI/` (23); đổi tên (không lên git) `binkw32_o.dll`, `cnc-ddraw config.exe.disabled`; đã loại 25 file (keygen, LAN serials, launcher gốc, setup, SafeDisc, patcher, src.7z, aqrit.cfg).
-- GitHub `main` @ `286b1b5`: đúng 28 file trên, README thêm mục “Khác biệt so với bản gốc”. Đã clone lại kiểm chứng.
-- Repo cục bộ Ra2026 vẫn ở `a65885b` (chứa file game, chưa push) → người dùng cần `git fetch origin` + `git reset origin/main`.
-
-## 2026-11-02 11:00 — Mod Editor: hộp Hiệu năng (giảm giật khi đông quân)
-- Người dùng hỏi lag khi đông quân có phải do chạy 1 luồng: đúng (engine 1 luồng, không có mã nguồn nên không đa luồng hóa được); nguyên nhân trực tiếp là chọn mục tiêu, tìm đường, vẽ voxel, hiệu ứng; bản mod xây nhanh ×3 làm trận đông hơn.
-- Người dùng chốt: chỉnh trong giao diện HTML rồi ghi file, không mở file sửa tay.
-- Thêm nút **Hiệu năng** (`#b-perf`, `openPerf/perfPlan/perfSummary` trong `template.html`):
-  - `ddraw.ini` (cnc-ddraw 4.4.3): renderer, maxfps, vsync → ghi `[ddraw]` + `[game]` + `[gamemd]` (mục riêng ghi đè mục chung); singlecpu, fullscreen/windowed → `[ddraw]`. Chỉ ghi khi khác giá trị đang có hiệu lực.
-  - `RA2MD.INI` / `RA2.INI`: `[Video] ScreenWidth/ScreenHeight`, `[Options] DetailLevel`.
-  - Luật (qua `apply()`, hoàn tác được, rồi mở hộp Lưu): MaxDebris/MinDebris ≤3/≤1 hoặc 0; `[AudioVisual] DetailMinFrameRateNormal`; xóa `DamageParticleSystems`.
-  - Sao lưu vào `mod_backups/` trước khi ghi; giữ CRLF, Windows-1252.
-- Hiện trạng máy: `ddraw.ini` có `singlecpu=true`, `[game]/[gamemd] maxfps=60`, `renderer=automatic`; RA2MD.INI 1440×900 DetailLevel=2; RA2.INI 1360×768 DetailLevel=2. **Chưa thay đổi gì** trên máy, người dùng tự bấm Áp dụng.
-- Kiểm chứng: Playwright + OPFS giả lập thư mục với `ddraw.ini`/`RA2MD.INI`/`RA2.INI` thật: mở hộp không đổi gì → “Chưa có gì thay đổi”; đề xuất → ddraw.ini chỉ đổi renderer (3 dòng) + singlecpu, RA2MD.INI DetailLevel, rulesmd.ini 566 giá trị (chỉ MaxDebris/MinDebris/DetailMinFrameRateNormal, byte khác giữ nguyên), sao lưu đúng, không lỗi console; test2.js cũ vẫn qua; giao diện 1440 px và 390 px ổn.
-- CHƯA kiểm chứng: hiệu quả thật trong game trên Windows; singlecpu=false có gây treo không; DamageParticleSystems rỗng trong game.
-- Tag `v2026.11.02`: git push tag từ cloud thất bại; form tạo release đã điền sẵn trong Chrome, người dùng tự bấm Publish (hệ thống chặn tôi bấm).
-
-## 2026-11-02 11:40 — Bố cục màn hình + Windows 11
-- Mod Editor: nhóm nút trên cùng bọc trong `.acts`; ≤1439 px thanh nút xuống dòng 2 (trước đó 1024 px đẩy “Khôi phục…”/“Lưu vào game” ra ngoài màn hình); body dạng flex cột nên chiều cao tự theo thanh nút; `.view` max-width 1060 → 1800 px (1920 px: 6 ô/hàng, 2560: 7); ≥1800 px cột danh sách 360 px. `test_layout.js`: 9 cỡ màn hình, không cuộn ngang, nút Lưu luôn hiện. test2.js, test_perf.js vẫn qua.
-- Windows 11 (người dùng yêu cầu “ensure work trên Windows 11”):
-  - PE: BINKW32.DLL / Play_*.exe chỉ import kernel32, advapi32, user32, msvcrt; subsystem 4.0; vá IAT so khớp cả theo **tên hàm** lẫn địa chỉ nên không lệ thuộc chuyển tiếp kernel32→kernelbase của Win10/11.
-  - Wine 9 đặt Windows 11 (build 22000): Play_YR → gamemd.exe, Play_RA2 → game.exe khởi động; registry ảo 28 dòng, 0 khóa Westwood trong registry thật, 0 file mới ngoài thư mục, blocked.log trống. (Bộ file thử là bản stage một phần 57 file; YR thoát sau ~30–45 s headless, chưa rõ do thiếu file hay headless.)
-  - Rủi ro chỉ kiểm được trên máy thật: Smart App Control (chặn exe không chữ ký trên máy cài mới 22H2+), SmartScreen với file từ ZIP (MOTW), Defender nghi DLL vá IAT, màn đen khi đổi độ phân giải (đổi renderer — theo admin CnCNet).
-  - README VI/EN: mục “Windows 11”; editor: gợi ý đổi bộ vẽ khi màn đen.
-- CHƯA kiểm chứng: chạy trên Windows 11 thật.
-
-## 2026-11-02 13:20 — Làm nét hình trong game
-- Người dùng: hình nhà, lính không nét. Nguyên nhân (ddraw.ini): `d3d9linear=true` + `shader=Shaders\interpolation\bilinear.glsl` (phóng to bilinear), `maintas=false` ở `[ddraw]`/`[game]`/`[gamemd]` (kéo giãn méo), game chạy 1440×900 (YR) / 1360×768 (RA2) rồi phóng lên màn hình. Thư mục `Shaders\` có nearest-neighbor, xbrz-freescale, lanczos2-sharp, fast-sharpen, cubic, crt.
-- Hộp Hiệu năng → “Hiệu năng & độ nét”: phần **Độ nét hình** (`pf-scale`: soft/pixel/xbrz/lanczos → d3d9linear + shader; xBRZ/Lanczos tự đặt renderer=opengl; `pf-maintas`, `pf-boxing`); độ phân giải có thêm độ phân giải màn hình (`screen.width × devicePixelRatio`); nút **Hình nét nhất** = độ phân giải màn hình + nearest + maintas=true.
-- Logic ghi ddraw.ini thống nhất: so với giá trị có hiệu lực của `[game]` và `[gamemd]`; ghi `[ddraw]` và mục riêng nào đang khai báo khóa đó.
-- Kiểm chứng (Playwright, OPFS, màn giả lập 1920×1080): Hình nét nhất → ddraw.ini đổi maintas (3 mục), shader, d3d9linear; RA2MD.INI/RA2.INI → 1920×1080; mở lại nhận đúng trạng thái; xBRZ → renderer=opengl; test_perf, test2 vẫn qua, không lỗi console.
-- CHƯA kiểm chứng trong game thật: độ nét thực tế, xBRZ/Lanczos trên GPU, RA2 gốc có nhận 1920×1080 trở lên không.
-
-## 2026-11-02 13:45 — Ảnh cameo trong Mod Editor nét hơn
-- Người dùng làm rõ: “lính, nhà… đang mờ” là ảnh trong Mod Editor (không phải trong game; phần độ nét trong game vẫn giữ).
-- Nguyên nhân: ảnh lưu JPEG nén (~1,9 KB/ảnh), danh sách thu nhỏ 60×48→48×38, chi tiết phóng ×2,4 (144×115) bằng nội suy mượt.
-- Sửa: trích lại 434 cameo từ language.mix/langmd.mix/ecache03/04/5.mix (`cameo.pal` trong ra2.mix/cache.mix) → PNG 8-bit, màu 0 trong suốt; danh sách 60×48 (×1), chi tiết 180×144 (×3), điện thoại 120×96 (×2); `image-rendering: pixelated`, `object-fit: contain`. Chỉ khóa `icons` trong data.js đổi (đã so sánh yr/ra2 giữ nguyên). File HTML 1,85 → 2,31 MB.
-- Script: `AI/tools/src/mod-editor/cameo/extract.py`, `build_png.py`.
-- Kiểm chứng: Playwright 1440 (DPR 1), 1536 (DPR 1,25), 390 (DPR 3): ảnh 60×48 gốc, hiển thị 180×144/120×96 pixelated; test2, test_perf, test_sharp, test_layout qua, không lỗi console.
-- Chưa làm: ảnh trong sổ tay PDF vẫn phóng bằng Lanczos (người dùng chưa yêu cầu).
-
-## 2026-11-02 14:45 — Cameo AI (Real-ESRGAN) + bảng Thay đổi có ảnh & giải thích
-- Người dùng muốn ảnh lớn ở khung chi tiết nét (không vỡ ô). Phóng thường (Lanczos ± làm sắc) chỉ mịn hơn, vẫn nhòe → đề xuất Real-ESRGAN; chạy mô hình tải từ GitHub bị hệ thống chặn cho tới khi **người dùng đồng ý (14:14 “Đồng ý chạy Real-ESRGAN”)**.
-- Real-ESRGAN x4plus (spandrel 0.x, torch CPU) trên 434 cameo → 240×192; lần 2 tô vùng màu 0 bằng màu kề bên để hết viền xanh. Đóng gói WebP q80 (3,52 MB base64) thay `icons` trong data.js; icon() nhận dạng mime theo đầu base64. Bỏ `image-rendering: pixelated`. HTML 2,31 → 4,30 MB.
-- Lưu ý: AI tự vẽ chi tiết (mặt chó, lông…) có thể khác gốc; ảnh gốc PNG vẫn tái tạo được bằng `cameo/extract.py` + `build_png.py`.
-- Người dùng (14:14, kèm ảnh chụp bảng Thay đổi): “phải có ảnh minh họa và giải thích nó là cái gì”. Bảng Thay đổi viết lại: nhóm theo mục (`describeSec`: quân/công trình + cameo, vũ khí → quân dùng, đầu nổ → quân dùng, siêu vũ khí, luật chung/AudioVisual…, nhãn chữ khi không có ảnh), từng khóa có nhãn + giải thích (`keyDoc`: F, GENERAL_FIELDS, KEYDOC mới cho MaxDebris/MinDebris/DetailMinFrameRate…), tóm tắt theo loại. 568 thay đổi mở trong ~0,35–0,4 s.
-- Kiểm chứng: test_changes (301 nhóm, Hoàn lại, Xem điều hướng), test2, test_perf, test_sharp, test_layout 9/9; ảnh 240×192 hiển thị 180×144 (DPR 1, 1,25) và 120×96 (DPR 3); không lỗi console.
-
-## 2026-11-04 08:50 — Lên cấp từng bậc (VeteranRatio 3 → 6), áp dụng trên máy
-- Người dùng: quân đa số nhảy thẳng từ Tân binh lên Tinh nhuệ. Nguyên nhân: kinh nghiệm = giá trị quân bị diệt / (giá mình × VeteranRatio); với VeteranRatio=3, quân rẻ diệt quân/nhà đắt (≥ 6× giá mình) lên 2 bậc một lần. Engine chỉ có 3 bậc (VeteranCap=2).
-- Người dùng yêu cầu tự chỉnh: `[General] VeteranRatio=6.0` cho cả hai game, giữ nguyên comment, CRLF, mọi dòng khác.
-  - RA2: sửa `Ra2026\rules.ini` rời; bản cũ `mod_backups\rules_20261104_015021.ini`.
-  - YR: tạo `Ra2026\rulesmd.ini` = `AI/mod/rulesmd-mod-expandmd03-yr.ini` (trùng từng byte với bản mod trong editor) + VeteranRatio=6.0 → YR giờ dùng file rời thay vì luật trong expandmd03.mix (nội dung như nhau).
-  - Kiểm chứng: so với nguồn chỉ khác đúng 1 dòng.
-- Không thuộc git (file game). Hoàn tác: Mod Editor → Khôi phục…, hoặc chép lại bản trong mod_backups / xóa rulesmd.ini.
-- LAN: máy khác phải dùng cùng rules.ini / rulesmd.ini.
-
-## 2026-11-04 09:00 — Sửa lỗi “String Manager failed to initialize properly” (Windows thật)
-- Người dùng mở Play_YR trên Windows → hộp thoại ***FATAL*** String Manager failed to initialize properly. `portable\registry.txt` cho thấy game đã đăng ký `CLSID\{1440AD10-6AA8-11D1-B6F9-00A024DDAFD1}` (Blowfish Block Cypher Engine, InprocServer32 = `E:\games\Ra2\Ra2026\blowfish.dll`) vào **registry ảo**; `ole32!CoCreateInstance` (không bị vá, đọc registry thật) trả REGDB_E_CLASSNOTREG → String Manager hỏng. Wine `+ole` tái hiện: 2 lần CoCreateInstance {1440ad10…} “not registered”.
-- Sửa `portable.c`: hook `ole32!CoCreateInstance` (game.exe và gamemd.exe đều import trực tiếp). Gọi bản thật trước; nếu REGDB_E_CLASSNOTREG/READREGDB/CO_E_DLLNOTFOUND/ERRORINDLL và có CLSCTX_INPROC_SERVER → tra `HKCR\CLSID\{…}\InprocServer32` trong registry ảo, chỉ nhận file `.dll` **trong thư mục game**, LoadLibrary + vá IAT của nó + DllGetClassObject → IClassFactory::CreateInstance. Ghi `COM-PORTABLE` vào blocked.log (thêm `logtag`). Build thêm `-lole32 -luuid`; 83 forward Bink, tên export giữ nguyên.
-- BINKW32.DLL mới: SHA-256 2800ed0b7ea7682ea95776bace6e47f3f979ba773a9d3b67491d4fc44257701c (cũ b09599b1…).
-- Kiểm chứng (Wine 9, giả lập Windows 11): YR và RA2 đều 2 dòng COM-PORTABLE (tạo Blowfish thành công), registry thật 0 khóa Westwood/1440AD10. Chưa kiểm chứng trên Windows thật → người dùng mở lại Play_YR.
-
+1. Phe Yuri mốc 1a: faction + nhà + quân từ rulesmd (art YR), cơ chế đặc biệt làm đơn giản.
+2. Bản build Windows chạy thử (hoặc hướng dẫn make.cmd) → người dùng test 4 bậc + 3 phe.
+3. Mốc 1b: viết trait C# cho cơ chế Yuri.

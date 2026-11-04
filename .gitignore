@@ -1,46 +1,51 @@
-# =====================================================================
-# Ra2026 — .gitignore (gốc repo = thư mục game E:\games\Ra2\Ra2026)
-# Chỉ đưa lên git phần dự án tạo ra. Toàn bộ file game của EA (exe, mix,
-# csf, ini, bản đồ, save...) chỉ nằm trên máy, KHÔNG lên git.
-# =====================================================================
+user.config
+engine
 
-# --- 1. Bỏ mọi thứ ở gốc, rồi cho phép lại đúng các mục của dự án ---
-/*
-!/.gitignore
-!/README.md
-!/README.en.md
-!/AI/
-!/BINKW32.DLL
-!/Play_RA2.exe
-!/Play_YR.exe
+# Visual Studio
+Release
+bin
+obj
+*.ncb
+*.vcproj*
+*.suo
+*.user
+*.sln.cache
+*.manifest
+*.CodeAnalysisLog.xml
+*.lastcodeanalysissucceeded
+_ReSharper.*/
+/.vs
 
-# --- 2. Dữ liệu sinh ra khi chạy / chỉnh mod (chỉ ở máy) ---
-#   portable/    registry ảo + log chặn ghi của BINKW32.DLL
-#   mod_backups/ bản sao lưu của RA2 Mod Editor
-#   rulesmd.ini / rules.ini rời do Mod Editor lưu → đã bị mục 1 bỏ qua
-/portable/
-/mod_backups/
+# Visual Studio Code
+/.vscode/settings.json
 
-# --- 3. Bằng chứng bảo mật gốc: giữ trên máy ---
-/AI/security/*/evidence/
+# backup files by various editors
+*~
+*.orig
+\#*
+.*.sw?
 
-# --- 4. Rác hệ điều hành / editor / build ---
-Thumbs.db
-ehthumbs.db
-desktop.ini
+# Monodevelop
+*.pidb
+*.userprefs
+
+# Mac OS X
 .DS_Store
-~$*
-*.tmp
-*.bak
-*.swp
-*.log
-.vscode/
-.idea/
-__pycache__/
-*.pyc
-.venv/
-venv/
-node_modules/
-*.pkl
 
-# Muốn đưa thêm một file ở gốc lên git: thêm dòng  !/ten-file  vào mục 1.
+# SublimeText
+*.sublime-project
+*.sublime-workspace
+
+# NUnit
+/TestResult.xml
+/lib/
+
+# Support directory
+/Support
+
+# IntelliJ files
+.idea
+
+# RA Reborn: file game EA và dữ liệu chạy, không đưa lên git
+/Ra2026
+/Support
