@@ -292,9 +292,9 @@ spy:
 	Selectable:
 		Bounds: 579, 1351, -24, -386
 	Health:
-		HP: 25
+		HP: 100
 	RevealsShroud:
-		Range: 5c0
+		Range: 9c0
 	Passenger:
 		CustomPipType: yellow
 	TakeCover:
@@ -321,6 +321,8 @@ spy:
 		Voice: Action
 	QuantizeFacingsFromSequence:
 		Sequence: stand
+	Armor:
+		Type: Flak
 
 ghost:
 	Inherits: ^Infantry
@@ -424,6 +426,8 @@ ccomand:
 		DamageTriggers: TriggerProne
 	RenderSprites:
 		Image: ccomand
+	Armor:
+		Type: None
 
 ptroop:
 	Inherits: ccomand
@@ -470,6 +474,8 @@ ptroop:
 		VoiceSet: YuriVoice
 	RenderSprites:
 		Image: ptroop
+	Armor:
+		Type: None
 
 tany:
 	Inherits: ^Infantry
@@ -483,7 +489,7 @@ tany:
 		BuildLimit: 1
 		Description: Elite commando infantry, armed with \ndual pistols and C4.\n  Strong vs Infantry, Buildings\n  Weak vs Vehicles, Aircraft\nSpecial Ability: Destroy Building with C4\n\nMaximum 1 can be trained.
 	Valued:
-		Cost: 1000
+		Cost: 1500
 	UpdatesPlayerStatistics:
 		AddToArmyValue: true
 	DeliversCash:
@@ -495,12 +501,12 @@ tany:
 	Selectable:
 		Bounds: 482, 1448, 0, -530
 	Health:
-		HP: 125
+		HP: 200
 	Mobile:
-		Speed: 75
+		Speed: 90
 		Locomotor: swimsuit
 	RevealsShroud:
-		Range: 6c0
+		Range: 8c0
 	Demolition:
 		Voice: Attack
 	Armor:
@@ -687,3 +693,5 @@ cleg:
 		ChronoshiftSound: schrmov.wav
 		ReturnToOrigin: false
 		ExplodeInstead: false
+	Mobile:
+		Speed: 75

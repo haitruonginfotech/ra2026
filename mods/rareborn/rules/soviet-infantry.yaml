@@ -43,6 +43,8 @@ e2:
 		Prerequisites: barracks.infiltrated
 	QuantizeFacingsFromSequence:
 		Sequence: stand
+	Armor:
+		Type: Flak
 
 flakt:
 	Inherits@1: ^Infantry
@@ -196,7 +198,7 @@ terror:
 	Mobile:
 		Speed: 90
 	RevealsShroud:
-		Range: 6c0
+		Range: 9c0
 	Armor:
 		Type: Flak
 	Passenger:
@@ -358,7 +360,7 @@ civan:
 	Tooltip:
 		Name: Chrono Ivan
 	Valued:
-		Cost: 1000
+		Cost: 1750
 	UpdatesPlayerStatistics:
 		AddToArmyValue: true
 	-Crushable:
@@ -375,6 +377,10 @@ civan:
 		ChargeDelay: 300
 		TargetCursor: chronosphere
 	-Explodes:
+	RevealsShroud:
+		Range: 8c0
+	Mobile:
+		Speed: 90
 
 yuri:
 	Inherits: ^Infantry
@@ -386,7 +392,7 @@ yuri:
 		Prerequisites: natech, ~nahand
 		Description: Psychic infantry. Can mind control enemy units.\nCan be deployed to unleash a powerful psychic wave.\n  Strong vs Infantry, Vehicles\n  Weak vs Terror Drones, Aircraft, Buildings
 	Valued:
-		Cost: 1200
+		Cost: 800
 	UpdatesPlayerStatistics:
 		AddToArmyValue: true
 	DeliversCash:
@@ -466,20 +472,20 @@ yuripr:
 	Tooltip:
 		Name: Yuri Prime
 	Valued:
-		Cost: 2000
+		Cost: 1500
 	UpdatesPlayerStatistics:
 		AddToArmyValue: true
 	DeliversCash:
 		Payload: 1000
 		PlayerExperience: 100
 	Health:
-		HP: 200
+		HP: 150
 	Armor:
 		Type: Flak
 	-Crushable:
 	Mobile:
 		Speed: 90
 	RevealsShroud:
-		Range: 8c0
+		Range: 9c0
 	Armament:
 		Weapon: SuperMindControl

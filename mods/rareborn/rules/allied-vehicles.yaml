@@ -22,7 +22,7 @@ amcv:
 		TurnSpeed: 20
 		Locomotor: heavytracked
 	RevealsShroud:
-		Range: 4c0
+		Range: 6c0
 	MustBeDestroyed:
 		RequiredForShortGame: true
 	BaseBuilding:
@@ -378,7 +378,7 @@ sref:
 	Health:
 		HP: 150
 	Armor:
-		Type: Heavy
+		Type: Light
 	Mobile:
 		TurnSpeed: 20
 		Speed: 60

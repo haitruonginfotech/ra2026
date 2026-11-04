@@ -24,7 +24,7 @@ smcv:
 		TurnSpeed: 20
 		Locomotor: heavytracked
 	RevealsShroud:
-		Range: 4c0
+		Range: 6c0
 	MustBeDestroyed:
 		RequiredForShortGame: true
 	BaseBuilding:
@@ -420,7 +420,7 @@ dtruck:
 		TurnSpeed: 20
 		Locomotor: heavytracked
 	RevealsShroud:
-		Range: 4c0
+		Range: 5c0
 	Explodes:
 		Weapon: demobomb
 		EmptyWeapon: demobomb

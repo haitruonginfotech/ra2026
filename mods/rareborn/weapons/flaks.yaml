@@ -1,9 +1,19 @@
 FlakGuyGun:
 	Inherits: ^Flak
+	ReloadDelay: 20
+	Warhead@1Dam: SpreadDamage
+		Versus:
+			Flak: 125
+			Plate: 100
 
 FlakGuyGunE:
 	Inherits: FlakGuyGun
 	Burst: 2
+	ReloadDelay: 20
+	Warhead@1Dam: SpreadDamage
+		Versus:
+			Flak: 125
+			Plate: 100
 
 CRFlakGuyGun:
 	Inherits: FlakGuyGun
@@ -16,6 +26,9 @@ FlakGuyAAGun:
 	Inherits: ^AAFlak
 	Range: 8c0
 	ValidTargets: Air
+	Warhead@1Dam: SpreadDamage
+		Versus:
+			Medium: 80
 
 FlakGuyAAGunE:
 	Inherits: FlakGuyAAGun
@@ -23,12 +36,17 @@ FlakGuyAAGunE:
 	ValidTargets: Air
 	Warhead@1Dam: SpreadDamage
 		Damage: 8
+		Versus:
+			Medium: 80
 
 FlakTrackGun:
 	Inherits: ^Flak
 	ValidTargets: Ground, Water
 	Warhead@1Dam: SpreadDamage
 		Damage: 25
+		Versus:
+			Flak: 125
+			Plate: 100
 
 FlakTrackAAGun:
 	Inherits: ^AAFlak
@@ -39,6 +57,7 @@ FlakTrackAAGun:
 		Versus:
 			Flak: 80
 			Light: 100
+			Medium: 100
 
 FlakWeapon:
 	Inherits: FlakTrackAAGun
@@ -47,3 +66,5 @@ FlakWeapon:
 	Report: bflaatta.wav, bflaattb.wav, bflaattc.wav, bflaattd.wav
 	Warhead@1Dam: SpreadDamage
 		Damage: 40
+		Versus:
+			Medium: 100

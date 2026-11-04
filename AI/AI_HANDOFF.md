@@ -43,3 +43,11 @@ _Cập nhật: 2026-11-04 (Asia/Ho_Chi_Minh) · Agent: Claude (cloud session + d
 - Báo “click không di chuyển, không xây được”: do OpenRA mặc định Control Scheme **Modern** (chuột phải ra lệnh). Đã thêm `Game: UseClassicMouseStyle: True` vào `E:\games\Ra2\RAReborn\Support\settings.yaml` (bản sao `settings.yaml.bak-20261104`); build-portable.sh tạo sẵn settings.yaml Classic cho các bản sau.
 - Sidebar trống là bình thường cho tới khi triển khai MCV thành Construction Yard.
 
+## 2026-11-04 12:40 — Đồng bộ chỉ số với luật gốc YR
+- Người dùng: “bắt chước y chang RA2… giống 100%”; chọn ưu tiên “Chỉ số giống hệt trước”. Kế hoạch 4 phần: (1) chỉ số ✅, (2) hoàn thiện RA2 (V3, Dreadnought, chó/kỹ sư Liên Xô, garrison nhà dân, Spy Plane), (3) quân YR cho Đồng Minh/Liên Xô, (4) phe Yuri.
+- Mức có sẵn (YR, TechLevel 1–10): bộ binh 20/30, xe & tàu 26/41, máy bay 2/2, công trình 36/52 (RA2: 19/21, 26/28, 2/2, 36/36).
+- `tools/parity/ra2_parity.py`: đọc INI gốc + `./utility.sh --resolved-rules` từng actor + tự resolve weapons YAML; quy đổi Speed×15, Range ô→NcM, Verses 11 giáp (special_1→Drone, special_2→Rocket). `--apply` ghi vào block của chính actor/vũ khí (tạo node nếu thiếu). SPECIAL_WEAPONS (Tesla/Prism/MindControl/DroneJump/IvanBomber/Hornet/…) chỉ báo cáo.
+- Nguồn đối chiếu: rulesmd.ini chính thức YR (expandmd01.mix; bản trong nhánh ra2026-legacy `AI/mod/rulesmd-official-yr.ini`).
+- Kết quả: trước 66 giá trị quân + 146 giá trị vũ khí lệch; đã ghi 136 (127 + 9 lượt 2 vì thừa kế). Còn: 34 dòng quân (toàn tên vũ khí khác do cơ chế riêng), 51 giá trị vũ khí ⚙️, 41 mục chưa có. `--check-yaml` sạch, 0 hình thiếu. Báo cáo: `AI/parity/2026-11-04-yr-before.md`, `-remaining.md`.
+- Bản game trên máy (`E:\games\Ra2\RAReborn\mods\rareborn\rules|weapons`) được chép file luật mới.
+

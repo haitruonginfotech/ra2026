@@ -72,7 +72,7 @@ sub:
 		Speed: 60
 	-LeavesTrails:
 	RevealsShroud:
-		Range: 6c0
+		Range: 4c0
 	Targetable:
 		TargetTypes: Ground, Water, Repair, Submergeable
 		RequiresCondition: !underwater
@@ -128,7 +128,7 @@ hyd:
 		Prerequisites: naradr, ~nayard
 		Description: Anti-Air/Anti-Infantry naval unit.\n  Strong vs Aircraft, Infantry\n  Weak vs Vehicles, Naval Units
 	Valued:
-		Cost: 900
+		Cost: 600
 	UpdatesPlayerStatistics:
 		AddToArmyValue: true
 	Tooltip:
@@ -136,7 +136,7 @@ hyd:
 	Selectable:
 		Bounds: 1206, 1448, 0, -289
 	Health:
-		HP: 300
+		HP: 400
 	Armor:
 		Type: Heavy
 	Mobile:

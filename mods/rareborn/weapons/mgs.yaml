@@ -4,21 +4,31 @@ M1Carbine:
 	Report: iconatta.wav, iconattb.wav, iconattc.wav, iconattd.wav, iconatte.wav
 	Warhead@1Dam: SpreadDamage
 		Damage: 15
+		Versus:
+			Plate: 80
 
 M1CarbineE:
 	Inherits: M1Carbine
-	ReloadDelay: 20
+	ReloadDelay: 25
 	Range: 5c0
 	Warhead@1Dam: SpreadDamage
 		Damage: 20
+		Versus:
+			Plate: 80
 
 M60:
 	Inherits: ^MG
+	Warhead@1Dam: SpreadDamage
+		Damage: 15
+		Versus:
+			Plate: 80
 
 M60E:
 	Inherits: M60
 	Warhead@1Dam: SpreadDamage
 		Damage: 25
+		Versus:
+			Plate: 80
 
 CRM60:
 	Inherits: M60
@@ -32,19 +42,22 @@ para:
 	ReloadDelay: 15
 	Report: igiat2a.wav, igiat2b.wav, igiat2c.wav, igiat2d.wav, igiat2c.wav, igiat2d.wav
 	Warhead@1Dam: SpreadDamage
-		Damage: 15
+		Damage: 25
 		Versus:
 			Flak: 100
 			Light: 60
 			Medium: 40
 			Heavy: 40
+			Plate: 100
 		DamageTypes: Prone50Percent, TriggerProne, BulletDeath
 
 paraE:
 	Inherits: para
-	Range: 7c0
+	Range: 6c0
 	Warhead@1Dam: SpreadDamage
 		Damage: 25
+		Versus:
+			Plate: 100
 
 MP5:
 	Inherits: ^MG
@@ -57,13 +70,13 @@ MP5:
 			None: 200
 			Flak: 100
 			Plate: 100
-			Light: 0
-			Medium: 0
-			Heavy: 0
-			Wood: 0
-			Steel: 0
-			Concrete: 0
-			Drone: 0
+			Light: 1
+			Medium: 1
+			Heavy: 1
+			Wood: 1
+			Steel: 1
+			Concrete: 1
+			Drone: 1
 			Rocket: 100
 		DamageTypes: BulletDeath
 	Warhead@2Eff: CreateEffect
@@ -71,14 +84,45 @@ MP5:
 
 MP5E:
 	Inherits: MP5
+	Warhead@1Dam: SpreadDamage
+		Versus:
+			Light: 1
+			Medium: 1
+			Heavy: 1
+			Wood: 1
+			Steel: 1
+			Concrete: 1
+			Drone: 1
 
 DoublePistols:
 	Inherits: MP5
 	Report: itanatta.wav, itanattb.wav
+	ReloadDelay: 5
+	Warhead@1Dam: SpreadDamage
+		Versus:
+			None: 100
+			Wood: 1
+			Steel: 1
+			Concrete: 1
+			Drone: 1
+			Light: 0
+			Medium: 0
+			Heavy: 0
 
 DoublePistolsE:
 	Inherits: DoublePistols
 	Range: 8c0
+	Warhead@1Dam: SpreadDamage
+		Versus:
+			None: 100
+			Wood: 1
+			Steel: 1
+			Concrete: 1
+			Drone: 1
+			Light: 0
+			Medium: 0
+			Heavy: 0
+	ReloadDelay: 10
 
 CRMP5:
 	Inherits: DoublePistols
@@ -87,7 +131,7 @@ CRMP5:
 awp:
 	Inherits: DoublePistols
 	ValidTargets: Infantry
-	ReloadDelay: 100
+	ReloadDelay: 150
 	Range: 14c0
 	Report: isniatta.wav
 	Projectile: Bullet
@@ -96,6 +140,15 @@ awp:
 		Spread: 42
 		Damage: 125
 		DamageTypes: BulletDeath
+		Versus:
+			Light: 1
+			Medium: 1
+			Heavy: 1
+			Wood: 1
+			Steel: 1
+			Concrete: 1
+			Drone: 1
+			None: 200
 
 AWPE:
 	Inherits: awp
@@ -115,9 +168,11 @@ AWPE:
 			Light: 60
 			Medium: 40
 			Heavy: 40
+			Plate: 100
 	Warhead@2Eff: CreateEffect
 		Explosions: piff
 		ValidTargets: Ground, Water, Air
+	ReloadDelay: 30
 
 20mme:
 	Inherits: 20mm
@@ -130,10 +185,15 @@ vulcan:
 	Report: bsenatta.wav, bsenattb.wav, bsenattc.wav, bsenattd.wav
 	Warhead@1Dam: SpreadDamage
 		Damage: 50
+		Versus:
+			Plate: 80
 
 vulcan2:
 	Inherits: vulcan
 	Report: bpilatta.wav, bpilattb.wav, bpilattc.wav, bpilattd.wav, bpilattc.wav
+	Warhead@1Dam: SpreadDamage
+		Versus:
+			Plate: 80
 
 BlackHawkCannon:
 	Inherits: ^MG
@@ -141,4 +201,6 @@ BlackHawkCannon:
 	Range: 6c0
 	Report: vblhatta.wav, vblhattb.wav
 	Warhead@1Dam: SpreadDamage
-		Damage: 25
+		Damage: 35
+		Versus:
+			Plate: 80

@@ -69,6 +69,7 @@ GPLv3 (giống OpenRA và OpenRA RA2 mod), xem `LICENSE`. Bản quyền tài s�
 ## 6. Lịch sử thay đổi
 
 ### 2026-11-04
+- 📊 **Chỉ số giống luật gốc Yuri's Revenge**: công cụ `tools/parity/ra2_parity.py` đối chiếu từng quân/vũ khí với `rulesmd.ini` gốc và tự sửa. Đã sửa **136 giá trị** (giá, máu, giáp, tầm nhìn, tốc độ, sát thương, tốc độ bắn, tầm bắn, sát thương theo giáp) — vd Tanya $1500/200 máu, Spy 100 máu/tầm nhìn 9, súng GI sát thương 15. Còn lại: vũ khí có cơ chế riêng (Tesla, Prism, điều khiển tâm trí…) và 41 quân/nhà chưa có — xem `AI/parity/`.
 - 🖱️ Điều khiển mặc định **Classic** (chuột trái ra lệnh như RA2) cho bản portable; trước đó là Modern (chuột phải ra lệnh) khiến người chơi tưởng không di chuyển được.
 - 🖱️ **Bản Windows portable bấm là chạy** (`RAReborn.exe`, .NET kèm sẵn, 64-bit): script `packaging/windows/build-portable.sh`. Thử trên Wine giả lập Windows 11: vào tới màn hình thiết lập đầu tiên, nhật ký nằm trong `RAReborn\Support` (portable).
 - 💬 Thông báo đầu game đổi thành “RA Reborn - early preview”.

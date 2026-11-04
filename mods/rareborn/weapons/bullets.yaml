@@ -1,6 +1,6 @@
 GrandCannonWeapon:
 	Inherits: ^LargeBullet
-	ReloadDelay: 75
+	ReloadDelay: 120
 	Report: bgraatta.wav
 	Range: 15c0
 	MinRange: 3c0
@@ -67,6 +67,7 @@ sabotE:
 	Warhead@3EffWater: CreateEffect
 		Explosions: large_watersplash
 		ImpactSounds: gexpwala.wav
+	Burst: 2
 
 MirageGun:
 	Inherits: ^LargeBullet
@@ -116,12 +117,12 @@ MirageGunE:
 			Wood: 20
 			Steel: 15
 			Concrete: 10
-			Drone: 200
+			Drone: 400
 
 20mmrapidE:
 	Inherits: ^LargeBullet
 	ReloadDelay: 50
-	Range: 5c512
+	Range: 5c768
 	Report: vrhiatta.wav, vrhiattb.wav, vrhiattc.wav, vrhiattd.wav
 	Warhead@1Dam: SpreadDamage
 		Damage: 50
@@ -151,7 +152,7 @@ MirageGunE:
 		Versus:
 			None: 25
 			Flak: 25
-			Plate: 25
+			Plate: 15
 			Light: 75
 			Medium: 100
 			Heavy: 100
@@ -163,13 +164,13 @@ MirageGunE:
 
 105mmE:
 	Inherits: 105mm
-	ReloadDelay: 75
+	ReloadDelay: 50
 	Burst: 2
 	BurstDelays: 5
 	Projectile: Bullet
 		Speed: 682
 	Warhead@1Dam: SpreadDamage
-		Damage: 55
+		Damage: 65
 		Versus:
 			None: 100
 			Flak: 100
@@ -194,7 +195,7 @@ MirageGunE:
 		Versus:
 			None: 25
 			Flak: 25
-			Plate: 25
+			Plate: 15
 			Light: 75
 			Medium: 100
 			Heavy: 100
@@ -206,21 +207,21 @@ MirageGunE:
 
 120mmE:
 	Inherits: 120mm
-	ReloadDelay: 80
+	ReloadDelay: 65
 	Burst: 2
 	BurstDelays: 5
 	Projectile: Bullet
 		Speed: 682
 	Warhead@1Dam: SpreadDamage
-		Damage: 85
+		Damage: 90
 		Versus:
 			None: 100
 			Flak: 100
 			Plate: 100
 			Light: 100
-			Wood: 50
-			Steel: 100
-			Concrete: 50
+			Wood: 65
+			Steel: 45
+			Concrete: 60
 	Warhead@2Eff: CreateEffect
 		Explosions: elite_explosion
 		ImpactSounds: gexpapoa.wav
@@ -240,9 +241,11 @@ MirageGunE:
 			Wood: 100
 			Steel: 100
 			Concrete: 70
+			Plate: 25
 	Warhead@2Eff: CreateEffect
 		Explosions: apoc_explosion
 		ImpactSounds: gexpapoa.wav
+	ReloadDelay: 80
 
 120mmxE:
 	Inherits: 120mmx
@@ -262,6 +265,7 @@ MirageGunE:
 		ImpactSounds: gexpwala.wav
 	Warhead@4Smu: LeaveSmudge
 		SmudgeType: MediumCrater, MediumScorch
+	ReloadDelay: 80
 
 155mm:
 	Inherits: ^LargeBullet
@@ -282,7 +286,7 @@ MirageGunE:
 			Medium: 60
 			Heavy: 60
 			Wood: 100
-			Steel: 80
+			Steel: 100
 			Concrete: 60
 			Drone: 100
 			Rocket: 100
@@ -290,3 +294,6 @@ MirageGunE:
 155mmE:
 	Inherits: 155mm
 	Burst: 2
+	Warhead@1Dam: SpreadDamage
+		Versus:
+			Steel: 100

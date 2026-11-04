@@ -948,6 +948,8 @@ nawall:
 		Description: Light wall.\nCrushable by vehicles.
 	Tooltip:
 		Name: Soviet Wall
+	RevealsShroud:
+		Range: 1c0
 
 naflak:
 	Inherits: ^VoxelLighting

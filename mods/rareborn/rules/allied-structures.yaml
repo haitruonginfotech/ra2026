@@ -304,7 +304,7 @@ gaairc:
 	ProvidesRadar:
 		RequiresCondition: !lowpower
 	RevealsShroud:
-		Range: 10c0
+		Range: 5c0
 	WithIdleOverlay@top:
 		Sequence: idle-top
 		PauseOnCondition: lowpower
@@ -382,6 +382,8 @@ amradr:
 		UnitType: pdplane
 		CameraActor: camera
 		ArrowSequence: arrow
+	RevealsShroud:
+		Range: 5c0
 
 gaweap:
 	Inherits: ^BaseBuilding
@@ -711,6 +713,8 @@ gawall:
 		Description: Light wall.\nCrushable by vehicles.
 	Tooltip:
 		Name: Allied Wall
+	RevealsShroud:
+		Range: 1c0
 
 gapill:
 	Inherits: ^SupportBuilding
@@ -774,7 +778,7 @@ nasam:
 	Armor:
 		Type: Steel
 	RevealsShroud:
-		Range: 7c0
+		Range: 10c0
 	IsometricSelectable:
 		Height: 45
 	Turreted:

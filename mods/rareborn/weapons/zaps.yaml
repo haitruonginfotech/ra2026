@@ -175,7 +175,7 @@ SuperComet:
 RadBeamWeapon:
 	ValidTargets: Ground
 	Range: 6c0
-	ReloadDelay: 100
+	ReloadDelay: 50
 	Report: idesat1a.wav
 	Projectile: RadBeam
 		Amplitude: 476
@@ -195,7 +195,7 @@ RadBeamWeapon:
 			Wood: 0
 			Steel: 0
 			Concrete: 0
-			Drone: 0 # This is actually 100, but drones are immune to Radiation
+			Drone: 100
 			Rocket: 100
 		DamageTypes: RadiationDeath
 
@@ -204,6 +204,9 @@ RadBeamWeaponE:
 	Range: 8c0
 	Warhead@1Dam: SpreadDamage
 		Damage: 200
+		Versus:
+			Drone: 100
+	ReloadDelay: 50
 
 CRRadBeamWeapon:
 	Inherits: RadBeamWeapon

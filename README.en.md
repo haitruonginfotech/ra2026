@@ -69,6 +69,7 @@ GPLv3 (same as OpenRA and the OpenRA RA2 mod), see `LICENSE`. Red Alert 2 / Yuri
 ## 6. Changelog
 
 ### 2026-11-04
+- 📊 **Stats match the original Yuri's Revenge rules**: `tools/parity/ra2_parity.py` compares every unit/weapon with the original `rulesmd.ini` and fixes them. **136 values** corrected (cost, HP, armor, sight, speed, damage, rate of fire, range, damage vs armor) — e.g. Tanya $1500/200 HP, Spy 100 HP/sight 9, GI rifle damage 15. Remaining: weapons with special mechanics (Tesla, Prism, mind control…) and 41 missing units/buildings — see `AI/parity/`.
 - 🖱️ Portable build defaults to **Classic** controls (left-click commands, like RA2); Modern (right-click commands) made units look unresponsive.
 - 🖱️ **Click-and-play Windows portable build** (`RAReborn.exe`, .NET bundled, 64-bit): script `packaging/windows/build-portable.sh`. Tested under Wine in Windows 11 mode: reaches the first-run setup screen, logs go to `RAReborn\Support` (portable).
 - 💬 Startup notice renamed to “RA Reborn - early preview”.
