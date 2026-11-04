@@ -128,3 +128,12 @@ _Cập nhật: 2026-11-02 (Asia/Ho_Chi_Minh) · Agent: Claude (Cowork, cloud ses
 - Người dùng (14:14, kèm ảnh chụp bảng Thay đổi): “phải có ảnh minh họa và giải thích nó là cái gì”. Bảng Thay đổi viết lại: nhóm theo mục (`describeSec`: quân/công trình + cameo, vũ khí → quân dùng, đầu nổ → quân dùng, siêu vũ khí, luật chung/AudioVisual…, nhãn chữ khi không có ảnh), từng khóa có nhãn + giải thích (`keyDoc`: F, GENERAL_FIELDS, KEYDOC mới cho MaxDebris/MinDebris/DetailMinFrameRate…), tóm tắt theo loại. 568 thay đổi mở trong ~0,35–0,4 s.
 - Kiểm chứng: test_changes (301 nhóm, Hoàn lại, Xem điều hướng), test2, test_perf, test_sharp, test_layout 9/9; ảnh 240×192 hiển thị 180×144 (DPR 1, 1,25) và 120×96 (DPR 3); không lỗi console.
 
+## 2026-11-04 08:50 — Lên cấp từng bậc (VeteranRatio 3 → 6), áp dụng trên máy
+- Người dùng: quân đa số nhảy thẳng từ Tân binh lên Tinh nhuệ. Nguyên nhân: kinh nghiệm = giá trị quân bị diệt / (giá mình × VeteranRatio); với VeteranRatio=3, quân rẻ diệt quân/nhà đắt (≥ 6× giá mình) lên 2 bậc một lần. Engine chỉ có 3 bậc (VeteranCap=2).
+- Người dùng yêu cầu tự chỉnh: `[General] VeteranRatio=6.0` cho cả hai game, giữ nguyên comment, CRLF, mọi dòng khác.
+  - RA2: sửa `Ra2026\rules.ini` rời; bản cũ `mod_backups\rules_20261104_015021.ini`.
+  - YR: tạo `Ra2026\rulesmd.ini` = `AI/mod/rulesmd-mod-expandmd03-yr.ini` (trùng từng byte với bản mod trong editor) + VeteranRatio=6.0 → YR giờ dùng file rời thay vì luật trong expandmd03.mix (nội dung như nhau).
+  - Kiểm chứng: so với nguồn chỉ khác đúng 1 dòng.
+- Không thuộc git (file game). Hoàn tác: Mod Editor → Khôi phục…, hoặc chép lại bản trong mod_backups / xóa rulesmd.ini.
+- LAN: máy khác phải dùng cùng rules.ini / rulesmd.ini.
+
