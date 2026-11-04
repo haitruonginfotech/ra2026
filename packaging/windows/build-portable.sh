@@ -44,6 +44,8 @@ install_windows_launcher "${ENGINE}" "${BUILTDIR}" "${PLATFORM}" "${MOD_ID}" "${
 # Chế độ portable: OpenRA dùng <thư mục exe>\Support thay cho %APPDATA%\OpenRA khi thư mục này tồn tại.
 mkdir -p "${BUILTDIR}/Support"
 printf 'RA Reborn portable: cai dat, save, log luu o day (khong ghi vao AppData).\r\n' > "${BUILTDIR}/Support/README.txt"
+# Điều khiển kiểu Red Alert 2: chuột trái chọn VÀ ra lệnh (OpenRA mặc định Modern = chuột phải ra lệnh)
+printf 'Game:\n\tUseClassicMouseStyle: True\n' > "${BUILTDIR}/Support/settings.yaml"
 cp "${TEMPLATE_ROOT}/README.md" "${BUILTDIR}/README.md"
 cp "${TEMPLATE_ROOT}/README.en.md" "${BUILTDIR}/README.en.md"
 cp "${TEMPLATE_ROOT}/LICENSE" "${BUILTDIR}/LICENSE.txt"

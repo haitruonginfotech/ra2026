@@ -29,6 +29,7 @@ The project's **own** real-time strategy game, built on [OpenRA](https://github.
    E:\games\Ra2\RAReborn   ← portable build, contains RAReborn.exe
    ```
 2. Double-click **`RAReborn.exe`**. No .NET install needed (bundled), nothing written to the registry.
+3. Controls default to RA2 style (**Classic**: left-click selects and commands). Change in *Settings → Input → Control Scheme*. Deploy the MCV: select it, then click it again.
 
 **Portable** mode: settings, saves and logs live in `RAReborn\Support`, nothing goes to AppData.
 
@@ -68,6 +69,7 @@ GPLv3 (same as OpenRA and the OpenRA RA2 mod), see `LICENSE`. Red Alert 2 / Yuri
 ## 6. Changelog
 
 ### 2026-11-04
+- 🖱️ Portable build defaults to **Classic** controls (left-click commands, like RA2); Modern (right-click commands) made units look unresponsive.
 - 🖱️ **Click-and-play Windows portable build** (`RAReborn.exe`, .NET bundled, 64-bit): script `packaging/windows/build-portable.sh`. Tested under Wine in Windows 11 mode: reaches the first-run setup screen, logs go to `RAReborn\Support` (portable).
 - 💬 Startup notice renamed to “RA Reborn - early preview”.
 - 🚀 Started **RA Reborn** on `main` from the OpenRA RA2 mod (upstream commit in `UPSTREAM_RA2_COMMIT`), engine `release-20231010`.

@@ -29,6 +29,7 @@ Game chiến thuật thời gian thực **của riêng dự án**, dựng trên 
    E:\games\Ra2\RAReborn   ← bản portable, có RAReborn.exe
    ```
 2. Bấm đúp **`RAReborn.exe`**. Không cần cài .NET (đã kèm sẵn), không ghi registry.
+3. Điều khiển mặc định giống RA2 (**Classic**: chuột trái chọn và ra lệnh). Đổi ở *Settings → Input → Control Scheme*. Triển khai MCV: chọn xe rồi bấm lại vào chính nó.
 
 Chế độ **portable**: cài đặt, save, log nằm trong `RAReborn\Support`, không ghi vào AppData.
 
@@ -68,6 +69,7 @@ GPLv3 (giống OpenRA và OpenRA RA2 mod), xem `LICENSE`. Bản quyền tài s�
 ## 6. Lịch sử thay đổi
 
 ### 2026-11-04
+- 🖱️ Điều khiển mặc định **Classic** (chuột trái ra lệnh như RA2) cho bản portable; trước đó là Modern (chuột phải ra lệnh) khiến người chơi tưởng không di chuyển được.
 - 🖱️ **Bản Windows portable bấm là chạy** (`RAReborn.exe`, .NET kèm sẵn, 64-bit): script `packaging/windows/build-portable.sh`. Thử trên Wine giả lập Windows 11: vào tới màn hình thiết lập đầu tiên, nhật ký nằm trong `RAReborn\Support` (portable).
 - 💬 Thông báo đầu game đổi thành “RA Reborn - early preview”.
 - 🚀 Khởi tạo **RA Reborn** trên nhánh `main` từ OpenRA RA2 mod (commit upstream trong `UPSTREAM_RA2_COMMIT`), engine `release-20231010`.

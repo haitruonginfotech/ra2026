@@ -38,3 +38,8 @@ _Cập nhật: 2026-11-04 (Asia/Ho_Chi_Minh) · Agent: Claude (cloud session + d
 - Vì đặt ở `RAReborn` (cạnh Ra2026), EngineDir = thư mục exe → `../Ra2026` đúng; TestFiles của ModContent thỏa.
 - CHƯA kiểm chứng: chạy trên Windows thật (ANGLE/D3D trên GPU thật), vào trận, 4 bậc trong trận.
 
+## 2026-11-04 12:10 — Chạy được trên Windows thật; sửa điều khiển
+- Người dùng chạy RAReborn.exe trên Windows: vào trận được (MCV, $5000, sidebar Đồng Minh) — ANGLE/D3D chạy được trên GPU thật, log không có exception.
+- Báo “click không di chuyển, không xây được”: do OpenRA mặc định Control Scheme **Modern** (chuột phải ra lệnh). Đã thêm `Game: UseClassicMouseStyle: True` vào `E:\games\Ra2\RAReborn\Support\settings.yaml` (bản sao `settings.yaml.bak-20261104`); build-portable.sh tạo sẵn settings.yaml Classic cho các bản sau.
+- Sidebar trống là bình thường cho tới khi triển khai MCV thành Construction Yard.
+
