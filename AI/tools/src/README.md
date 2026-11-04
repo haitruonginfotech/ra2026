@@ -3,11 +3,12 @@
 ## portable-guard/ (đang chạy trong Ra2026)
 - `portable.c` → biên dịch thành `Ra2026\BINKW32.DLL` (proxy của binkw32; bản gốc đổi tên `binkw32_o.dll`).
   Vá IAT của game.exe/gamemd.exe: registry ảo (lưu `Ra2026\portable\registry.txt`), chặn ghi file ngoài thư mục game (log `Ra2026\portable\blocked.log`).
+  COM không đăng ký: chặn `ole32!CoCreateInstance`; khi Windows báo lớp chưa đăng ký (game chỉ đăng ký Blowfish.dll vào registry ảo) thì đọc `HKCR\CLSID\{…}\InprocServer32` trong registry ảo, nạp DLL **trong thư mục game** và gọi `DllGetClassObject` (ghi dòng `COM-PORTABLE` vào blocked.log). Thiếu phần này, Windows thật báo “String Manager failed to initialize properly”.
 - `launcher.c` → `Play_RA2.exe` (GAME_EXE="game.exe") và `Play_YR.exe` (GAME_EXE="gamemd.exe"); tạo mutex 48BC11BD-… mà game đòi rồi chạy game.
 - `binkw32.def` → bảng forward 83 export sang `binkw32_o.dll`.
 - Build (Linux, mingw-w64 i686):
   ```
-  i686-w64-mingw32-gcc -O2 -s -shared -o binkw32.dll portable.c binkw32.def -Wl,--enable-stdcall-fixup -static-libgcc -ladvapi32
+  i686-w64-mingw32-gcc -O2 -s -shared -o binkw32.dll portable.c binkw32.def -Wl,--enable-stdcall-fixup -static-libgcc -ladvapi32 -lole32 -luuid
   i686-w64-mingw32-gcc -O2 -s -mwindows -DGAME_EXE='"gamemd.exe"' -o Play_YR.exe launcher.c yr.res
   ```
 

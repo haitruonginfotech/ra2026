@@ -55,7 +55,7 @@ Byte-for-byte comparison with the original repack: **296 game files unchanged**.
 
 - Double-click `Play_YR.exe` (Yuri's Revenge) or `Play_RA2.exe` (Red Alert 2).
 - **Do not** start `game.exe` / `gamemd.exe` directly: the game exits immediately.
-- Registry data the game "writes" is kept in `portable\registry.txt`. Every blocked write outside the folder is logged in `portable\blocked.log`.
+- Registry data the game "writes" is kept in `portable\registry.txt`. Every blocked write outside the folder is logged in `portable\blocked.log` (`COM-PORTABLE` lines mean the guard loaded `Blowfish.dll` itself; normal).
 - To uninstall, delete the folder.
 
 ### Windows 11
@@ -100,6 +100,9 @@ See [`AI/tools/src/README.md`](AI/tools/src/README.md): mingw-w64 for the DLL/EX
 ---
 
 ## 7. Changelog
+
+### 2026-11-04
+- 🐞 **Fixed “\*\*\*FATAL\*\*\* String Manager failed to initialize properly” on Windows**: the game registers `Blowfish.dll` (COM) in the virtual registry, but Windows' `CoCreateInstance` only reads the real registry. `BINKW32.DLL` now loads `Blowfish.dll` straight from the game folder when Windows reports the class as not registered. Still nothing is written to the real registry. `portable\blocked.log` gains `COM-PORTABLE` lines (normal, not errors).
 
 ### 2026-11-02
 - 🤖 **Unit & building pictures upscaled with AI (Real-ESRGAN x4plus)**: 434 cameos 60×48 → 240×192 (WebP), sharp and smooth in the detail view; the list uses the same images scaled down. The AI invents some detail, so pictures may differ slightly from the originals. Editor file ~4.3 MB.

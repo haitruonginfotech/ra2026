@@ -55,7 +55,7 @@ So từng byte với bản repack gốc: **296 file game giữ nguyên**. Repo c
 
 - Bấm đúp `Play_YR.exe` (Yuri's Revenge) hoặc `Play_RA2.exe` (Red Alert 2).
 - **Không** mở trực tiếp `game.exe` / `gamemd.exe`: game sẽ tự thoát.
-- Những gì game "ghi" vào registry nằm ở `portable\registry.txt`. Mọi lần bị chặn ghi ra ngoài được ghi vào `portable\blocked.log`.
+- Những gì game "ghi" vào registry nằm ở `portable\registry.txt`. Mọi lần bị chặn ghi ra ngoài được ghi vào `portable\blocked.log` (dòng `COM-PORTABLE` là lớp chặn tự nạp `Blowfish.dll`, bình thường).
 - Gỡ game = xóa thư mục.
 
 ### Windows 11
@@ -100,6 +100,9 @@ Xem [`AI/tools/src/README.md`](AI/tools/src/README.md): mingw-w64 cho DLL/EXE, P
 ---
 
 ## 7. Lịch sử thay đổi
+
+### 2026-11-04
+- 🐞 **Sửa lỗi “\*\*\*FATAL\*\*\* String Manager failed to initialize properly” khi mở game trên Windows**: game đăng ký `Blowfish.dll` (COM) vào registry ảo, nhưng `CoCreateInstance` của Windows chỉ đọc registry thật. `BINKW32.DLL` giờ nạp thẳng `Blowfish.dll` từ thư mục game khi Windows báo chưa đăng ký. Vẫn không ghi gì vào registry thật. `portable\blocked.log` có thêm dòng `COM-PORTABLE` (bình thường, không phải lỗi).
 
 ### 2026-11-02
 - 🤖 **Ảnh quân & công trình phóng to bằng AI (Real-ESRGAN x4plus)**: 434 cameo 60×48 → 240×192 (WebP), nét và mịn ở khung chi tiết; danh sách dùng cùng ảnh thu nhỏ. AI tự vẽ thêm chi tiết nên có thể hơi khác ảnh gốc. File editor ~4,3 MB.

@@ -11,10 +11,16 @@
  *     opened READ-ONLY (so nothing can be written there)
  *   - file writes / directory creation / delete / move outside the game
  *     folder are refused and logged to <game>\portable\blocked.log
+ *   - CoCreateInstance: when Windows says a class is not registered (because
+ *     the game registered it only in the virtual registry, e.g. Blowfish.dll),
+ *     the in-proc server DLL listed there is loaded straight from the game
+ *     folder (registration-free COM).  Without this the game stops with
+ *     "String Manager failed to initialize properly" on real Windows.
  */
 #define WIN32_LEAN_AND_MEAN
 #define _WIN32_WINNT 0x0601
 #include <windows.h>
+#include <objbase.h>
 #include <tlhelp32.h>
 #include <wchar.h>
 #include <stdlib.h>
@@ -28,7 +34,7 @@ static CRITICAL_SECTION g_cs;
 
 /* ------------------------------------------------------------------ util */
 
-static void logline(const WCHAR *what, const WCHAR *arg)
+static void logtag(const char *tag, const WCHAR *what, const WCHAR *arg)
 {
     WCHAR path[MAX_PATH];
     char buf[1400];
@@ -42,12 +48,13 @@ static void logline(const WCHAR *what, const WCHAR *arg)
                     OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
     if (h == INVALID_HANDLE_VALUE) return;
     GetLocalTime(&st);
-    len = wsprintfA(buf, "%04d-%02d-%02d %02d:%02d:%02d  BLOCKED %ls  %ls\r\n",
+    len = wsprintfA(buf, "%04d-%02d-%02d %02d:%02d:%02d  %s %ls  %ls\r\n",
                     st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond,
-                    what, arg ? arg : L"");
+                    tag, what, arg ? arg : L"");
     WriteFile(h, buf, len, &n, NULL);
     CloseHandle(h);
 }
+static void logline(const WCHAR *what, const WCHAR *arg) { logtag("BLOCKED", what, arg); }
 
 static int has_prefix_ci(const WCHAR *s, const WCHAR *pre)
 {
@@ -700,9 +707,62 @@ static BOOL WINAPI H_WritePrivateProfileSectionA(LPCSTR a, LPCSTR s, LPCSTR f)
 static BOOL WINAPI H_WriteProfileStringA(LPCSTR a, LPCSTR k, LPCSTR v) { logline(L"WriteProfileString", L"win.ini"); SetLastError(ERROR_ACCESS_DENIED); return FALSE; }
 static BOOL WINAPI H_WriteProfileStringW(LPCWSTR a, LPCWSTR k, LPCWSTR v) { logline(L"WriteProfileString", L"win.ini"); SetLastError(ERROR_ACCESS_DENIED); return FALSE; }
 
+static void patch_module(HMODULE m);
+
+/* ------------------------------------------------- COM (registration-free) */
+
+typedef HRESULT (WINAPI *PFN_DGCO)(REFCLSID, REFIID, LPVOID *);
+
+/* InprocServer32 of a class registered in the VIRTUAL registry (HKCR) */
+static int vreg_inproc(REFCLSID clsid, WCHAR *dll, int cap)
+{
+    WCHAR g[64];
+    char ga[64], path[160];
+    VAL *v;
+    dll[0] = 0;
+    if (!StringFromGUID2(clsid, g, 64)) return 0;
+    WideCharToMultiByte(CP_ACP, 0, g, -1, ga, sizeof ga, NULL, NULL);
+    wsprintfA(path, "CLSID\\%s\\InprocServer32", ga);
+    vreg_init();
+    EnterCriticalSection(&g_cs);
+    v = find_val(walk(HKEY_CLASSES_ROOT, path, 0), "");
+    if (v && v->data && v->cb >= 2) {
+        if (v->cb >= 4 && v->data[1] == 0)            /* stored by a ...W call */
+            lstrcpynW(dll, (const WCHAR *)v->data, cap < (int)(v->cb / 2) ? cap : (int)(v->cb / 2) + 1);
+        else
+            MultiByteToWideChar(CP_ACP, 0, (const char *)v->data, -1, dll, cap);
+    }
+    LeaveCriticalSection(&g_cs);
+    return dll[0] != 0;
+}
+
+static HRESULT WINAPI H_CoCreateInstance(REFCLSID clsid, LPUNKNOWN outer, DWORD ctx, REFIID riid, LPVOID *ppv)
+{
+    HRESULT hr = CoCreateInstance(clsid, outer, ctx, riid, ppv), hr2;
+    WCHAR dll[MAX_PATH * 2], *ext;
+    HMODULE m;
+    PFN_DGCO dgco;
+    IClassFactory *cf = NULL;
+    if (hr != REGDB_E_CLASSNOTREG && hr != REGDB_E_READREGDB && hr != CO_E_DLLNOTFOUND && hr != CO_E_ERRORINDLL)
+        return hr;
+    if (!(ctx & CLSCTX_INPROC_SERVER) || !vreg_inproc(clsid, dll, MAX_PATH * 2)) return hr;
+    ext = wcsrchr(dll, L'.');
+    if (!inside_w(dll) || !ext || _wcsicmp(ext, L".dll") != 0) return hr;  /* only DLLs from the game folder */
+    m = LoadLibraryW(dll);
+    if (!m) return hr;
+    patch_module(m);                                       /* keep its writes inside the folder too */
+    dgco = (PFN_DGCO)GetProcAddress(m, "DllGetClassObject");
+    if (!dgco) return hr;
+    hr2 = dgco(clsid, &IID_IClassFactory, (LPVOID *)&cf);
+    if (FAILED(hr2) || !cf) return hr;
+    hr2 = cf->lpVtbl->CreateInstance(cf, outer, riid, ppv);
+    cf->lpVtbl->Release(cf);
+    if (SUCCEEDED(hr2)) logtag("COM-PORTABLE", L"CoCreateInstance", dll);
+    return SUCCEEDED(hr2) ? hr2 : hr;
+}
+
 /* ------------------------------------------------------------ IAT patch */
 
-static void patch_module(HMODULE m);
 
 static HMODULE after_load(HMODULE m)
 {
@@ -732,6 +792,7 @@ static HOOK g_hooks[] = {
     HK("advapi32.dll", RegQueryValueExA), HK("advapi32.dll", RegQueryValueExW),
     HK("advapi32.dll", RegEnumKeyExA), HK("advapi32.dll", RegEnumKeyA),
     HK("advapi32.dll", RegQueryInfoKeyA),
+    HK("ole32.dll", CoCreateInstance),
     HK("kernel32.dll", CreateFileA), HK("kernel32.dll", CreateFileW),
     HK("kernel32.dll", CreateDirectoryA), HK("kernel32.dll", CreateDirectoryW),
     HK("kernel32.dll", RemoveDirectoryA), HK("kernel32.dll", RemoveDirectoryW),

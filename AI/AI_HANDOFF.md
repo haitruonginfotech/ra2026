@@ -137,3 +137,9 @@ _Cập nhật: 2026-11-02 (Asia/Ho_Chi_Minh) · Agent: Claude (Cowork, cloud ses
 - Không thuộc git (file game). Hoàn tác: Mod Editor → Khôi phục…, hoặc chép lại bản trong mod_backups / xóa rulesmd.ini.
 - LAN: máy khác phải dùng cùng rules.ini / rulesmd.ini.
 
+## 2026-11-04 09:00 — Sửa lỗi “String Manager failed to initialize properly” (Windows thật)
+- Người dùng mở Play_YR trên Windows → hộp thoại ***FATAL*** String Manager failed to initialize properly. `portable\registry.txt` cho thấy game đã đăng ký `CLSID\{1440AD10-6AA8-11D1-B6F9-00A024DDAFD1}` (Blowfish Block Cypher Engine, InprocServer32 = `E:\games\Ra2\Ra2026\blowfish.dll`) vào **registry ảo**; `ole32!CoCreateInstance` (không bị vá, đọc registry thật) trả REGDB_E_CLASSNOTREG → String Manager hỏng. Wine `+ole` tái hiện: 2 lần CoCreateInstance {1440ad10…} “not registered”.
+- Sửa `portable.c`: hook `ole32!CoCreateInstance` (game.exe và gamemd.exe đều import trực tiếp). Gọi bản thật trước; nếu REGDB_E_CLASSNOTREG/READREGDB/CO_E_DLLNOTFOUND/ERRORINDLL và có CLSCTX_INPROC_SERVER → tra `HKCR\CLSID\{…}\InprocServer32` trong registry ảo, chỉ nhận file `.dll` **trong thư mục game**, LoadLibrary + vá IAT của nó + DllGetClassObject → IClassFactory::CreateInstance. Ghi `COM-PORTABLE` vào blocked.log (thêm `logtag`). Build thêm `-lole32 -luuid`; 83 forward Bink, tên export giữ nguyên.
+- BINKW32.DLL mới: SHA-256 2800ed0b7ea7682ea95776bace6e47f3f979ba773a9d3b67491d4fc44257701c (cũ b09599b1…).
+- Kiểm chứng (Wine 9, giả lập Windows 11): YR và RA2 đều 2 dòng COM-PORTABLE (tạo Blowfish thành công), registry thật 0 khóa Westwood/1440AD10. Chưa kiểm chứng trên Windows thật → người dùng mở lại Play_YR.
+
